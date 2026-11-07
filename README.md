@@ -248,7 +248,23 @@ systemctl --user start rotten-backup.service && journalctl --user -u rotten-back
 ls -lhR ~/backups/rotten-server
 ```
 
-> Si ta clé SSH a une phrase de passe, le service tournant en arrière-plan ne pourra pas la saisir. Dans ce cas, il faut une clé dédiée sans phrase de passe (voir l'historique du projet ou demande-moi).
+#### Clé SSH dédiée (une seule fois)
+
+Le service tourne en arrière-plan : il ne peut pas taper la phrase de passe de ta clé principale. On lui donne une clé à lui, **sans phrase de passe mais bridée** : elle ne peut que *lire* `/opt/backups` (pas de shell, pas d'écriture).
+
+```bash
+ssh-keygen -t ed25519 -N "" -C "backup@rotten-desktop" -f ~/.ssh/rotten_backup
+```
+
+```bash
+echo "command=\"/usr/bin/rrsync -ro /opt/backups/\",restrict $(cat ~/.ssh/rotten_backup.pub)" | ssh rotten-guy@rotten-server 'cat >> ~/.ssh/authorized_keys'
+```
+
+Vérification : cette commande doit être **refusée** (la clé ne permet pas d'ouvrir un shell) :
+
+```bash
+ssh -i ~/.ssh/rotten_backup -o IdentitiesOnly=yes rotten-guy@rotten-server
+```
 
 `Persistent=true` : si ton PC est éteint à midi, la copie se fait au prochain démarrage.
 
