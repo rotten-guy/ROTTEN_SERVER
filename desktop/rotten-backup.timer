@@ -1,0 +1,10 @@
+[Unit]
+Description=Récupération quotidienne des sauvegardes de rotten-server
+
+[Timer]
+OnCalendar=*-*-* 12:00
+Persistent=true
+RandomizedDelaySec=15min
+
+[Install]
+WantedBy=timers.target

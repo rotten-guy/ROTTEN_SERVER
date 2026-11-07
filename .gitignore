@@ -3,5 +3,5 @@
 **/letsencrypt/
 stacks/adguard/work/
 stacks/adguard/conf/
-stacks/minecraft/backups/
+
 stacks/minecraft/modpacks/*.mrpack

@@ -53,4 +53,4 @@ services:
       TZ: Europe/Paris
     volumes:
       - ./data:/data:ro
-      - ./backups:/backups
+      - /opt/backups/minecraft:/backups   # récupéré par ton PC avec le reste

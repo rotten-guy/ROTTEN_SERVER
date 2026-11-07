@@ -18,7 +18,8 @@ ils ne marchent que sur tes appareils connectés à Tailscale. Rien n'est expos�
 ```
 ROTTEN_SERVER/
 ├── scripts/setup.sh                 # prépare le serveur et installe Dockge
-├── scripts/backup-vaultwarden.sh    # sauvegarde quotidienne (cron)
+├── scripts/backup.sh                # sauvegarde nocturne → /opt/backups (cron)
+├── desktop/                         # récupération automatique des backups sur ton PC
 ├── dockge/compose.yaml              # → /opt/dockge
 └── stacks/                          # → /opt/stacks (une stack = un dossier)
     ├── proxy/  adguard/  vaultwarden/  minecraft/
@@ -140,11 +141,7 @@ Les noms de conteneurs marchent car tout est sur le réseau Docker `proxy`.
 4. Remets `SIGNUPS_ALLOWED=false` et redéploie.
 5. Sur tes appareils : appli/extension **Bitwarden** → *Auto-hébergé* → `https://vault.rotten-guy.com`.
 
-Sauvegarde automatique chaque nuit dans `/opt/backups/vaultwarden/` (30 jours). Test manuel :
-
-```bash
-sudo /etc/cron.daily/backup-vaultwarden && ls -lh /opt/backups/vaultwarden
-```
+Sauvegardé chaque nuit avec le reste : voir [Sauvegardes](#sauvegardes).
 
 ### 4.4 minecraft
 
@@ -181,23 +178,89 @@ Commandes utiles :
 | Backup immédiat | `docker exec minecraft-backup backup now` |
 | Mettre à jour le pack | backup, remplacer `pack.mrpack`, *Recreate* dans Dockge |
 
-Restaurer un monde : arrêter la stack, `mv data/world data/world.old`, `tar -xzf backups/<archive>.tgz -C data`, relancer.
+Restaurer un monde : arrêter la stack, `mv data/world data/world.old`, `tar -xzf /opt/backups/minecraft/<archive>.tgz -C data`, relancer.
 
 ---
 
-## Sauvegardes hors du serveur (à faire !)
+## Sauvegardes
 
-Les sauvegardes sont sur le même SSD que tout le reste. Copie-les régulièrement ailleurs, par exemple depuis ton fixe :
+```
+rotten-server                                   rotten-desktop
+/opt/backups/                                   ~/backups/rotten-server/
+├── vaultwarden/  ← chaque nuit (cron)   ──►    copie quotidienne (timer systemd)
+├── config/       ← chaque nuit (cron)          gardée 90 jours, jamais effacée
+└── minecraft/    ← toutes les 6 h (mc-backup)  si le serveur est vidé
+     gardé 30 jours (Minecraft : 7)
+```
+
+`config/` contient toutes les stacks : proxy + certificats, AdGuard, Dockge, et les `.env`.
+**Ces archives contiennent des secrets** : elles ne sont lisibles que par `rotten-guy`.
+
+### Sur le serveur
 
 ```bash
-rsync -av rotten-guy@rotten-server:/opt/backups/ ~/backups-rotten-server/
+cd ~/ROTTEN_SERVER && git pull
 ```
 
 ```bash
-rsync -av rotten-guy@rotten-server:/opt/stacks/minecraft/backups/ ~/backups-rotten-server/minecraft/
+sudo apt install -y rsync && sudo rm -f /etc/cron.daily/backup-vaultwarden
 ```
 
-Pour Vaultwarden en particulier : exporte aussi ton coffre de temps en temps (*Outils → Exporter* dans le coffre web), au format chiffré.
+```bash
+sudo install -m 755 scripts/backup.sh /etc/cron.daily/homelab-backup
+```
+
+Test :
+
+```bash
+sudo /etc/cron.daily/homelab-backup && ls -lhR /opt/backups
+```
+
+### Sur ton PC (Arch)
+
+```bash
+sudo pacman -S --needed rsync
+```
+
+```bash
+git clone https://github.com/rotten-guy/ROTTEN_SERVER.git ~/ROTTEN_SERVER
+```
+
+```bash
+install -Dm755 ~/ROTTEN_SERVER/desktop/pull-backups.sh ~/.local/bin/pull-backups.sh
+```
+
+```bash
+install -Dm644 -t ~/.config/systemd/user ~/ROTTEN_SERVER/desktop/rotten-backup.{service,timer}
+```
+
+```bash
+systemctl --user daemon-reload && systemctl --user enable --now rotten-backup.timer
+```
+
+Test immédiat, puis vérification :
+
+```bash
+systemctl --user start rotten-backup.service && journalctl --user -u rotten-backup -n 20
+```
+
+```bash
+ls -lhR ~/backups/rotten-server
+```
+
+> Si ta clé SSH a une phrase de passe, le service tournant en arrière-plan ne pourra pas la saisir. Dans ce cas, il faut une clé dédiée sans phrase de passe (voir l'historique du projet ou demande-moi).
+
+`Persistent=true` : si ton PC est éteint à midi, la copie se fait au prochain démarrage.
+
+### Restaurer
+
+| Quoi | Comment |
+|---|---|
+| Vaultwarden | Arrêter la stack, vider `/opt/stacks/vaultwarden/data`, `sudo tar -xzf vaultwarden-<date>.tgz -C /opt/stacks/vaultwarden/data`. Si un fichier `db_*.sqlite3` est présent, le renommer en `db.sqlite3`. Relancer. |
+| Configs | `sudo tar -xzf config-<date>.tgz -C /opt` (restaure `/opt/stacks` et `/opt/dockge`) |
+| Monde Minecraft | voir la section Minecraft |
+
+**En plus**, exporte ton coffre de temps en temps depuis le coffre web (*Outils → Exporter*, format **chiffré**), et range le fichier ailleurs. C'est ta roue de secours si tout le reste échoue.
 
 ## Sécurité, en résumé
 

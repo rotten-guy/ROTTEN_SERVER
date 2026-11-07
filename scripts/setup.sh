@@ -46,8 +46,9 @@ mkdir -p /opt/stacks /opt/dockge /opt/backups
 cp -rn "$REPO/stacks/." /opt/stacks/
 cp -n "$REPO/dockge/compose.yaml" /opt/dockge/compose.yaml
 
-echo "==> Sauvegarde quotidienne de Vaultwarden"
-install -m 755 "$REPO/scripts/backup-vaultwarden.sh" /etc/cron.daily/backup-vaultwarden
+echo "==> Sauvegarde nocturne (/opt/backups)"
+apt-get install -y rsync
+install -m 755 "$REPO/scripts/backup.sh" /etc/cron.daily/homelab-backup
 
 echo "==> Démarrage de Dockge"
 docker compose -f /opt/dockge/compose.yaml up -d
