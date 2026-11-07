@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Préparation du NUC (Debian 13). À lancer depuis la racine du dépôt :
+# Préparation du serveur (Debian 13). À lancer depuis la racine du dépôt :
 #   sudo bash scripts/setup.sh <ton_utilisateur>
 set -euo pipefail
 USER_NAME="${1:?Usage: sudo bash scripts/setup.sh <utilisateur>}"

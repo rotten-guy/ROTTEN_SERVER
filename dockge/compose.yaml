@@ -1,5 +1,5 @@
 # Dockge : interface web pour gérer les stacks de /opt/stacks
-# Installé dans /opt/dockge par scripts/setup.sh — http://<ip-du-nuc>:5001
+# Installé dans /opt/dockge par scripts/setup.sh — http://192.168.1.107:5001
 services:
   dockge:
     image: louislam/dockge:1

@@ -1,5 +1,5 @@
 # Nginx Proxy Manager : reverse proxy + certificats HTTPS (Let's Encrypt via l'API OVH)
-# Interface d'admin : http://<ip-du-nuc>:81
+# Interface d'admin : http://192.168.1.107:81
 services:
   npm:
     image: jc21/nginx-proxy-manager:latest
