@@ -1,0 +1,19 @@
+# Vaultwarden : gestionnaire de mots de passe compatible Bitwarden
+# Aucun port publié : uniquement accessible via le reverse proxy en HTTPS (obligatoire).
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: unless-stopped
+    environment:
+      DOMAIN: https://vault.rotten-guy.com
+      SIGNUPS_ALLOWED: ${SIGNUPS_ALLOWED:-false}   # true le temps de créer ton compte, puis false
+      TZ: Europe/Paris
+    volumes:
+      - ./data:/data
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

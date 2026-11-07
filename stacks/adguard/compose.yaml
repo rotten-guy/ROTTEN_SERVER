@@ -1,0 +1,21 @@
+# AdGuard Home : DNS + bloqueur de pubs pour toutes tes machines
+# Assistant de 1re installation : http://<ip-du-nuc>:3000
+# ⚠️ Dans l'assistant, mets l'interface web sur le port 3000 (pas 80) et le DNS sur 53.
+services:
+  adguard:
+    image: adguard/adguardhome:latest
+    container_name: adguard
+    restart: unless-stopped
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "3000:3000/tcp"
+    volumes:
+      - ./work:/opt/adguardhome/work
+      - ./conf:/opt/adguardhome/conf
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

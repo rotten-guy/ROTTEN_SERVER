@@ -1,0 +1,22 @@
+# Nginx Proxy Manager : reverse proxy + certificats HTTPS (Let's Encrypt via l'API OVH)
+# Interface d'admin : http://<ip-du-nuc>:81
+services:
+  npm:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: npm
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "81:81"        # admin ; une fois proxy.rotten-guy.com en place, tu peux le retirer
+    environment:
+      TZ: Europe/Paris
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
