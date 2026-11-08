@@ -12,6 +12,10 @@
 - [x] English documentation: setup, migration, backups, history
 - [x] Minecraft server live (Fabric 1.21.1, existing Hardcore world)
 - [x] Desktop on LAN + `/etc/hosts` (Tailscale broke Discord voice there)
+- [x] SSH hardened (keys only, no root); Termius on its own key
+- [x] Git sync script (`scripts/stacks.sh`) + server deploy key
+- [x] Existing Hardcore world restored (seed verified)
+- [x] Portfolio live on https://rotten-guy.com (GitHub Pages, `CNAME`; apex A/AAAA + `www` CNAME at OVH)
 - [x] Portfolio on https://rotten-guy.com (GitHub Pages)
 
 ## 🔜 Next
@@ -20,7 +24,10 @@
 - [x] First boot of the pack (`Done` in 17 s, 57 s total)
 - [x] Datapacks active (64, all mod-provided)
 - [x] Existing Hardcore world restored
-- [ ] Pre-generation with Chunky (radius 2000) running: check `chunky progress`
+- [ ] Overworld pre-generation (Chunky, radius 5000, centred on spawn -304,-112): ~31 h at 3.3 cps
+- [ ] Then **Deploy** the minecraft stack (applies the new backup settings: 12 h / 3 days / zstd), and `chunky continue` if needed
+- [ ] Nether pre-generation: `chunky world minecraft:the_nether` → `chunky center 0 0` → `chunky radius 1500` → `chunky start`
+- [ ] End pre-generation: `chunky world minecraft:the_end` → `chunky center 0 0` → `chunky radius 2000` → `chunky start`
 - [x] World backups land in `/opt/backups/minecraft` and reach the desktop
 - [ ] Join in game from the client pack and confirm the mod list matches
 
@@ -36,8 +43,8 @@
 
 ### Git in sync with the server
 - [x] `scripts/stacks.sh` (status / import / export of compose files)
-- [ ] Deploy key with write access on the server ([SETUP § 12](SETUP.md#12-keep-git-in-sync))
-- [ ] First `export` to replace the old French comments on the live files
+- [x] Deploy key with write access on the server
+- [x] First `export`: live files now match the repo
 - [ ] Later, optionally: make `/opt/stacks` the Git working tree itself (Dockge pointed at the repo), which removes the import/export step
 
 ### BlueMap: `mcmap.rotten-guy.com`
@@ -47,17 +54,6 @@ Live 3D web map of the world.
 - [ ] Accept the download in `data/config/bluemap/core.conf` (`accept-download: true`), restart.
 - [ ] NPM proxy host `mcmap.rotten-guy.com` → `minecraft:8100`, websockets on, wildcard cert.
 - [ ] On the Celeron: limit the render radius and render after pre-generation, at night. Full renders are CPU-heavy.
-
-### Portfolio on `rotten-guy.com`
-- [x] GitHub Pages custom domain (`CNAME` in `rotten-guy/rotten-guy.github.io`, PR #1)
-- [x] OVH: parking records removed, apex A/AAAA → GitHub Pages, `www` CNAME → `rotten-guy.github.io.`; `*` kept on the Tailscale IP
-- [ ] Enforce HTTPS ticked in *Settings → Pages*
-
-### Minecraft follow-up
-- [ ] Overworld pre-generation (radius 5000, centred on spawn -304,-112, ~31 h at 3.3 cps)
-- [ ] Then **Deploy** the minecraft stack to apply the new backup settings (12 h / 3 days / zstd), check with `docker inspect minecraft-backup`
-- [ ] Nether: `chunky world minecraft:the_nether`, `chunky center 0 0`, `chunky radius 1500`, `chunky start`
-- [ ] End: `chunky world minecraft:the_end`, `chunky center 0 0`, `chunky radius 2000`, `chunky start`
 
 ## 💡 Later / ideas
 

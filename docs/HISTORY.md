@@ -71,6 +71,9 @@ How ROTTEN_SERVER was built, in order: what was decided, why, and what went wron
 | Termius locked out after SSH hardening | the Termius host was using a password; its key slot was empty | generate a key in Termius, append its public key to `authorized_keys` |
 | OVH refuses an empty subdomain | this OVH UI needs `@` for the domain root | use `@` |
 | `chunky continue`: "No tasks to continue" | the task was already running (nothing paused) | check with `chunky progress` |
+| OVH refuses an empty subdomain | this UI needs `@` for the apex | use `@` |
+| GitHub Pages "Custom domain" empty after DNS change | the `CNAME` PR wasn't merged yet | merge it; don't type the domain in Settings (it would commit a conflicting `CNAME`) |
+| `chunky continue` → "No tasks to continue" | the task was still running, nothing paused | check with `chunky progress` |
 | `credentials-1` opens as "New File" in nano | NPM 2.16 keeps DNS credentials in its SQLite DB, writes the file only during renewal | rotate by issuing a new certificate (ROADMAP) |
 | Archives dated "yesterday" around midnight | server clock in UTC | `timedatectl set-timezone Europe/Paris` (now in `setup.sh`) |
 

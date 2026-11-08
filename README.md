@@ -1,6 +1,6 @@
 # ROTTEN_SERVER
 
-Self-hosted homelab behind **rotten-guy.com**: a low-power mini PC running Docker stacks, reachable from anywhere through Tailscale, with **zero ports opened on the router**.
+Self-hosted homelab behind **rotten-guy.com** (the apex serves the public [portfolio](https://rotten-guy.com) from GitHub Pages; every other name is private): a low-power mini PC running Docker stacks, reachable from anywhere through Tailscale, with **zero ports opened on the router**.
 
 ```
 rotten-server — Lenovo ThinkCentre M73 Tiny · Debian 13 (trixie)
