@@ -194,6 +194,24 @@ Performance notes for the current hardware:
 - View distance 8 and simulation distance 6 are already set.
 - Server-side optimisation mods help a lot: Lithium, FerriteCore, ModernFix.
 
+## 9.5 Clients at home: LAN instead of Tailscale (optional)
+
+A machine that never leaves home doesn't need Tailscale: point the names to the server's **LAN IP** instead. NPM listens on the LAN too, so HTTPS keeps working. This is how `rotten-desktop` is set up, because Tailscale broke Discord voice there.
+
+```bash
+sudo tailscale down && sudo systemctl disable --now tailscaled
+```
+
+```bash
+printf '\n# rotten-server (LAN)\n192.168.1.107 rotten-server dockge.rotten-guy.com proxy.rotten-guy.com adguard.rotten-guy.com vault.rotten-guy.com mc.rotten-guy.com mcmap.rotten-guy.com\n' | sudo tee -a /etc/hosts
+```
+
+```bash
+ping -c1 vault.rotten-guy.com
+```
+
+The ping must answer from `192.168.1.107`. Add every new subdomain to that `/etc/hosts` line. For ad blocking on such a machine, set its DNS server to `192.168.1.107` (AdGuard answers on the LAN).
+
 ## 10. Backups
 
 Follow [BACKUPS.md](BACKUPS.md): server side (already installed by `setup.sh`) + desktop pull with the restricted key.

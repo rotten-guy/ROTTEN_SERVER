@@ -10,15 +10,18 @@
 - [x] Vaultwarden + Bitwarden clients, sign-ups closed
 - [x] Nightly server backups + daily desktop pull with a restricted key
 - [x] English documentation: setup, migration, backups, history
+- [x] Minecraft server live (Fabric 1.21.1, existing Hardcore world)
+- [x] Desktop on LAN + `/etc/hosts` (Tailscale broke Discord voice there)
 
 ## 🔜 Next
 
 ### Minecraft go-live
-- [ ] First boot of the pack, wait for `Done (…)!`
-- [ ] Check datapacks are active: `docker exec minecraft rcon-cli "datapack list"`. Datapacks shipped in the `.mrpack` land in `/data/datapacks`, which vanilla doesn't load unless the pack has a global-datapack mod (Paxi, Open Loader…). If missing, copy them into `data/world/datapacks/`.
-- [ ] Verify the client pack matches the server pack (same mod versions), or joining fails.
-- [ ] Pre-generate the world with Chunky (radius 2000, overnight).
-- [ ] Confirm `/opt/backups/minecraft` fills up and reaches the desktop.
+- [x] First boot of the pack (`Done` in 17 s, 57 s total)
+- [x] Datapacks active (64, all mod-provided)
+- [x] Existing Hardcore world restored
+- [ ] Pre-generation with Chunky (radius 2000) running: check `chunky progress`
+- [x] World backups land in `/opt/backups/minecraft` and reach the desktop
+- [ ] Join in game from the client pack and confirm the mod list matches
 
 ### Security housekeeping
 - [ ] Harden SSH: no passwords, no root ([SETUP § 11](SETUP.md#11-harden-ssh))
@@ -57,6 +60,7 @@ Public site, but the server stays private.
 - [ ] **Pin image versions** instead of `latest` (reproducible installs, updates on purpose), and use `diun` to get notified of new versions.
 - [ ] **Monitoring**: Uptime Kuma (`status.rotten-guy.com`) + push notifications (ntfy) when a service or the server goes down.
 - [ ] Secondary DNS fallback for the tailnet in case the server is down.
+- [ ] Investigate Tailscale vs. Vesktop voice (DTLS) on Arch: `chrome://webrtc-internals`-style logs, Discord in the browser, another Electron client.
 
 ### Hardware
 The Celeron G1840T is the bottleneck for modded Minecraft (single-thread performance + 6 GB RAM).

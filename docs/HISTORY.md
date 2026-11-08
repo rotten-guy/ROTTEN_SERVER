@@ -42,6 +42,8 @@ How ROTTEN_SERVER was built, in order: what was decided, why, and what went wron
 11. **Backups**: `backup.sh` (vault + every config, nightly, 30 days) and a desktop systemd timer pulling `/opt/backups` daily, through a passphrase-less key locked to `rrsync -ro`. Tested end to end.
 12. **Minecraft**: server-only pack (configs, mods, datapacks; no resource or shader packs) uploaded; compose writes world backups to `/opt/backups/minecraft`.
 13. **Docs**: everything translated to English; setup, migration, backups, history and roadmap written.
+14. **Minecraft live**: server up in ~57 s, existing Hardcore world restored, 64 datapacks active (all mod-provided), first world backup pulled to the desktop. Chunky pre-generation (radius 2000) started.
+15. **Desktop leaves the tailnet**: Discord voice (Vesktop) failed at the DTLS step whenever Tailscale was up on the Arch desktop, even with no exit node, `--accept-dns=false` and `--netfilter-mode=off`. Root cause not found. Since the desktop never leaves home, it now reaches the server over the **LAN** via `/etc/hosts` instead, and `tailscaled` is disabled there. Tailscale stays on mobile devices.
 
 ## Gotchas (lessons learned)
 
@@ -56,6 +58,8 @@ How ROTTEN_SERVER was built, in order: what was decided, why, and what went wron
 | Bitwarden Android: timeout to `100.x` from `192.168.x` | Tailscale off on the phone | install Tailscale, enable Always-on VPN |
 | Backup timer: `Permission denied (publickey)` | main key has a passphrase; a timer can't type it | dedicated key restricted with `rrsync -ro` |
 | SFTP can't write to `/opt/stacks` | `/opt` belongs to root | upload to `~`, then `sudo mv` |
+| Discord voice stuck on "DTLS connection" on the desktop | unknown interaction between Tailscale and Vesktop's WebRTC on Arch (not DNS, not exit node, not netfilter) | desktop off the tailnet, LAN + `/etc/hosts` (see SETUP § Clients at home) |
+| Minecraft backups never pruned on the desktop | mc-backup writes `.tar.gz`, the pull script only pruned `.tgz` | prune both extensions |
 | Archives dated "yesterday" around midnight | server clock in UTC | `timedatectl set-timezone Europe/Paris` (now in `setup.sh`) |
 
 ## Security incidents
