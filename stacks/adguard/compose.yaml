@@ -1,6 +1,6 @@
-# AdGuard Home : DNS + bloqueur de pubs pour toutes tes machines
-# Assistant de 1re installation : http://192.168.1.107:3000
-# ⚠️ Dans l'assistant, mets l'interface web sur le port 3000 (pas 80) et le DNS sur 53.
+# AdGuard Home: DNS server + ad blocker for every device on the tailnet
+# First-run wizard: http://rotten-server:3000
+# ⚠️ In the wizard: admin web UI on port 3000 (NOT 80, taken by the proxy), DNS on 53.
 services:
   adguard:
     image: adguard/adguardhome:latest

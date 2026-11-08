@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# Sauvegarde nocturne du serveur -> /opt/backups
-# Installé dans /etc/cron.daily/homelab-backup (voir README, « Sauvegardes »)
+# Nightly server backup -> /opt/backups
+# Installed as /etc/cron.daily/homelab-backup (see docs/BACKUPS.md)
 #
 #   /opt/backups/
-#   ├── vaultwarden/   coffre de mots de passe (base + clés + pièces jointes)
-#   ├── config/        configs de toutes les stacks (proxy, certificats, AdGuard, Dockge, .env)
-#   └── minecraft/     écrit directement par le conteneur mc-backup
+#   ├── vaultwarden/   password vault (database, keys, attachments)
+#   ├── config/        every stack's config (proxy + certs, AdGuard, Dockge, .env files)
+#   └── minecraft/     written directly by the mc-backup container
 #
-# ⚠️ Ces archives contiennent des secrets (.env, clé API OVH, coffre chiffré) :
-#    elles ne sont lisibles que par rotten-guy.
+# ⚠️ These archives contain secrets (.env files, OVH API key, encrypted vault):
+#    they are readable by rotten-guy only.
 set -euo pipefail
 DEST=/opt/backups
 OWNER=rotten-guy
@@ -19,14 +19,14 @@ mkdir -p "$DEST/vaultwarden" "$DEST/config" "$DEST/minecraft"
 # --- Vaultwarden -------------------------------------------------------------
 VW=/opt/stacks/vaultwarden/data
 if [ -d "$VW" ]; then
-  # Copie cohérente de la base SQLite si le conteneur tourne
+  # Consistent SQLite snapshot (data/db_<timestamp>.sqlite3) if the container is running
   docker exec vaultwarden /vaultwarden backup >/dev/null 2>&1 \
-    || echo "avertissement : backup SQLite à chaud impossible, copie du fichier brut"
+    || echo "warning: live SQLite backup failed, archiving the raw database file"
   tar -czf "$DEST/vaultwarden/vaultwarden-$DATE.tgz" -C "$VW" --exclude=icon_cache .
   find "$VW" -maxdepth 1 -name 'db_*.sqlite3' -delete
 fi
 
-# --- Configurations ----------------------------------------------------------
+# --- Configuration -----------------------------------------------------------
 tar -czf "$DEST/config/config-$DATE.tgz" -C /opt \
   --exclude=stacks/minecraft/data \
   --exclude=stacks/minecraft/modpacks \
@@ -34,8 +34,8 @@ tar -czf "$DEST/config/config-$DATE.tgz" -C /opt \
   --exclude=stacks/adguard/work \
   stacks dockge
 
-# --- Rotation + droits -------------------------------------------------------
+# --- Rotation + permissions --------------------------------------------------
 find "$DEST/vaultwarden" "$DEST/config" -name '*.tgz' -mtime +"$KEEP_DAYS" -delete
 chown -R "$OWNER:$OWNER" "$DEST"
 chmod -R u=rwX,go= "$DEST"
-echo "Sauvegarde OK : $(du -sh "$DEST" | cut -f1) dans $DEST"
+echo "Backup OK: $(du -sh "$DEST" | cut -f1) in $DEST"

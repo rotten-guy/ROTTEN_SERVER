@@ -1,5 +1,5 @@
-# Nginx Proxy Manager : reverse proxy + certificats HTTPS (Let's Encrypt via l'API OVH)
-# Interface d'admin : http://192.168.1.107:81
+# Nginx Proxy Manager: reverse proxy + HTTPS certificates (Let's Encrypt, OVH DNS challenge)
+# Admin UI: https://proxy.rotten-guy.com (fallback: http://rotten-server:81)
 services:
   npm:
     image: jc21/nginx-proxy-manager:latest
@@ -8,7 +8,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "81:81"        # admin ; une fois proxy.rotten-guy.com en place, tu peux le retirer
+      - "81:81"        # admin UI; can be removed once proxy.rotten-guy.com works
     environment:
       TZ: Europe/Paris
     volumes:

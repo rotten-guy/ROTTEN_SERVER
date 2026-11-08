@@ -1,36 +1,36 @@
-# Serveur Minecraft (modpack Modrinth) + sauvegardes automatiques
-# Lancer : docker compose up -d     Logs : docker compose logs -f mc
+# Minecraft server (Modrinth modpack) + automatic world backups
+# Deploy from Dockge, or: docker compose up -d   — logs: docker compose logs -f mc
 services:
   mc:
-    image: itzg/minecraft-server:java21   # java21 = Minecraft 1.20.5 -> 1.21.x
+    image: itzg/minecraft-server:java21   # java21 = Minecraft 1.20.5 -> 1.21.x (26.x needs java25)
     container_name: minecraft
     restart: unless-stopped
     tty: true
     stdin_open: true
     ports:
-      - "25565:25565"            # NE PAS rediriger ce port sur la box : on passe par Tailscale
+      - "25565:25565"            # NEVER forward this on the router: access goes through Tailscale
     environment:
       EULA: "TRUE"
       TYPE: MODRINTH
-      MODRINTH_MODPACK: /modpacks/pack.mrpack   # ton .mrpack (les mods client sont exclus tout seuls)
-      MEMORY: ${MC_MEMORY:-3G}                  # 5,7 Go au total : 3G max (voir README)
-      USE_AIKAR_FLAGS: "true"                   # réglages JVM optimisés
+      MODRINTH_MODPACK: /modpacks/pack.mrpack   # your .mrpack (client-only mods are skipped automatically)
+      MEMORY: ${MC_MEMORY:-3G}                  # 5.7 GB total on this box: 3G max (see docs)
+      USE_AIKAR_FLAGS: "true"                   # tuned JVM flags
       TZ: Europe/Paris
 
-      # Monde
+      # World
       HARDCORE: "true"
       DIFFICULTY: hard
-      MOTD: "Homelab - Hardcore"
+      MOTD: "rotten-server - Hardcore"
       VIEW_DISTANCE: 8
       SIMULATION_DISTANCE: 6
       MAX_PLAYERS: 5
 
-      # Accès
+      # Access
       ENABLE_WHITELIST: "true"
       WHITELIST: ${MC_WHITELIST}
       OPS: ${MC_OPS}
 
-      # RCON (utilisé par les sauvegardes et `docker exec minecraft rcon-cli`)
+      # RCON (used by mc-backup and `docker exec minecraft rcon-cli`)
       ENABLE_RCON: "true"
       RCON_PASSWORD: ${RCON_PASSWORD}
     volumes:
@@ -48,9 +48,9 @@ services:
       RCON_PASSWORD: ${RCON_PASSWORD}
       BACKUP_INTERVAL: "6h"
       INITIAL_DELAY: "5m"
-      PRUNE_BACKUPS_DAYS: 7          # garde 7 jours d'historique
-      PAUSE_IF_NO_PLAYERS: "true"    # pas de backup inutile quand personne ne joue
+      PRUNE_BACKUPS_DAYS: 7          # keep 7 days of world history
+      PAUSE_IF_NO_PLAYERS: "true"    # no pointless backups while nobody plays
       TZ: Europe/Paris
     volumes:
       - ./data:/data:ro
-      - /opt/backups/minecraft:/backups   # récupéré par ton PC avec le reste
+      - /opt/backups/minecraft:/backups   # pulled to the desktop with everything else

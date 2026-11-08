@@ -1,5 +1,5 @@
 [Unit]
-Description=Récupération quotidienne des sauvegardes de rotten-server
+Description=Daily pull of rotten-server backups
 
 [Timer]
 OnCalendar=*-*-* 12:00

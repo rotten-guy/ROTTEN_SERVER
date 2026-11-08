@@ -1,5 +1,5 @@
 [Unit]
-Description=Récupère les sauvegardes de rotten-server
+Description=Pull rotten-server backups
 Wants=network-online.target
 After=network-online.target
 

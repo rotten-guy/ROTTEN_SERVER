@@ -1,5 +1,5 @@
-# Dockge : interface web pour gérer les stacks de /opt/stacks
-# Installé dans /opt/dockge par scripts/setup.sh — http://192.168.1.107:5001
+# Dockge: web UI managing the compose stacks in /opt/stacks
+# Installed to /opt/dockge by scripts/setup.sh — https://dockge.rotten-guy.com (fallback :5001)
 services:
   dockge:
     image: louislam/dockge:1
@@ -12,7 +12,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./data:/app/data
-      - /opt/stacks:/opt/stacks      # même chemin dedans et dehors : obligatoire
+      - /opt/stacks:/opt/stacks      # same path inside and outside: required by Dockge
     networks:
       - proxy
 
