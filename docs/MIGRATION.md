@@ -55,7 +55,7 @@ cd ~/backups/rotten-server && scp config/config-<date>.tgz vaultwarden/vaultward
 ```
 
 ```bash
-scp "$(ls -t ~/backups/rotten-server/minecraft/*.tgz | head -1)" rotten-guy@<new-server-lan-ip>:~/minecraft-latest.tgz
+scp "$(ls -t ~/backups/rotten-server/minecraft/*.tar.gz | head -1)" rotten-guy@<new-server-lan-ip>:~/minecraft-latest.tgz
 ```
 
 ```bash

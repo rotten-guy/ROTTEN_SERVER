@@ -13,7 +13,7 @@ rotten-server                                   rotten-desktop
 |---|---|---|
 | `vaultwarden/vaultwarden-<date>.tgz` | Vaultwarden `data/`: live SQLite snapshot + raw DB, RSA keys, attachments, config | `scripts/backup.sh` |
 | `config/config-<date>.tgz` | `/opt/stacks` + `/opt/dockge`: compose files, `.env` files, NPM database + Let's Encrypt certs + OVH credentials, AdGuard config, Dockge accounts | `scripts/backup.sh` |
-| `minecraft/*.tgz` | the whole Minecraft `/data` (world, configs, mods), excluding jars and caches | `itzg/mc-backup` |
+| `minecraft/world-<date>-<time>.tar.gz` | the whole Minecraft `/data` (world, configs, mods), excluding jars and caches | `itzg/mc-backup` |
 
 Excluded on purpose: the Minecraft data from `config/` (it has its own backups), AdGuard query logs, the Vaultwarden icon cache, and the modpack file (re-uploadable).
 
@@ -126,7 +126,7 @@ This restores `/opt/stacks` and `/opt/dockge`, including `.env` files, NPM proxy
    cd /opt/stacks/minecraft && sudo mv data/world data/world.old
    ```
    ```bash
-   sudo tar -xzf /opt/backups/minecraft/<archive>.tgz -C data
+   sudo tar -xzf /opt/backups/minecraft/world-<date>-<time>.tar.gz -C data
    ```
 3. **Deploy**. Delete `world.old` once everything looks right.
 

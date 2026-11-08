@@ -15,5 +15,5 @@ mkdir -p "$DEST"
 # Exit code 23/24 = some files unreadable or vanished mid-transfer (e.g. a
 # Minecraft backup being written): keep going, they'll be picked up next time.
 rsync -a --partial -e "ssh -i $KEY -o IdentitiesOnly=yes -o BatchMode=yes" "$SRC" "$DEST/" || { rc=$?; [ $rc -eq 23 ] || [ $rc -eq 24 ] || exit $rc; echo "warning: partial transfer (code $rc)"; }
-find "$DEST" -name '*.tgz' -mtime +"$KEEP_DAYS" -delete
+find "$DEST" \( -name '*.tgz' -o -name '*.tar.gz' \) -mtime +"$KEEP_DAYS" -delete
 echo "Backups up to date in $DEST ($(du -sh "$DEST" | cut -f1))"
