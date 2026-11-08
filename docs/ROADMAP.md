@@ -72,12 +72,17 @@ Live 3D web map of the world.
 ### Hardware
 The Celeron G1840T is the bottleneck for modded Minecraft (single-thread performance + 6 GB RAM).
 
-| Upgrade | Part (used market) | Effect |
-|---|---|---|
-| RAM | 2 × 8 GB DDR3L SO-DIMM (16 GB max) | `MC_MEMORY=8G` |
-| CPU | Intel i5-4590T or i7-4785T (LGA1150, 35 W) | 4 cores, >3 GHz turbo: much smoother ticks |
+**Planned purchase (next payday), < 40 € total:**
 
-Both are drop-in for the M73 Tiny. After upgrading: raise `MC_MEMORY`, view and simulation distance (see [MIGRATION.md → hardware-specific values](MIGRATION.md#hardware-specific-values-to-revisit)).
+| Part | Choice | Check on arrival | Effect |
+|---|---|---|---|
+| RAM | Samsung 2 × 8 GB DDR3L SO-DIMM, PC3L-12800S (M471B1G73EB0-YK0) | `PC3L`, 1600, SO-DIMM | 16 GB → `MC_MEMORY=8G`, room for Nextcloud |
+| CPU | Intel i5-4590T (35 W, 4C/4T, 3.0 GHz turbo) | sSpec **SR1S6** | 2 → 4 cores, turbo |
+
+Rejected: i7-4790 (84 W, too hot / too power-hungry for the Tiny's cooler and 65 W brick) and i7-4765T (+~35 € for Hyper-Threading only, on a platform that will be replaced anyway).
+Thermal paste + isopropyl alcohol: already at home.
+
+**Swap procedure:** wait for pre-generation to finish → `sudo systemctl poweroff` → swap CPU (clean + new paste) and both RAM sticks in one go → boot, check `fastfetch` / `free -h` → raise `MC_MEMORY`, view/simulation distance and `MAX_PLAYERS` (see [MIGRATION.md → hardware-specific values](MIGRATION.md#hardware-specific-values-to-revisit)).
 
 ### More services
 - [ ] **Obsidian sync**: Syncthing (light, peer-to-peer, works on Android) or Obsidian LiveSync (CouchDB, real-time). Either fits in today's RAM.
