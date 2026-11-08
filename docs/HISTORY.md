@@ -48,7 +48,8 @@ How ROTTEN_SERVER was built, in order: what was decided, why, and what went wron
 17. **OVH key rotation postponed**: NPM 2.16 stores DNS-challenge credentials in its database (the `credentials-N` file only exists during renewals), so rotation means re-issuing the certificate. Risk accepted for now; see ROADMAP.
 18. **Minecraft world restored properly**: the first copy had produced a new seed (the server didn't find the world, so it generated one). Fixed by stopping the stack, placing the folder containing `level.dat` as `data/world`, removing `session.lock`, `chown 1000:1000`. Seed verified, player data intact.
 19. **World backups resized** for a pre-generated world: every 12 h, 3 days on the server, 14 days on the desktop, zstd compression.
-20. **Git sync**: `scripts/stacks.sh` imports Dockge edits into the repo and exports repo changes to `/opt/stacks` (compose files only).
+20. **Portfolio on rotten-guy.com**: GitHub Pages custom domain (CNAME file via PR), OVH parking records replaced by GitHub's A/AAAA + `www` CNAME. Private services keep working: the `*` wildcard doesn't cover the apex.
+21. **Git sync**: `scripts/stacks.sh` imports Dockge edits into the repo and exports repo changes to `/opt/stacks` (compose files only).
 
 ## Gotchas (lessons learned)
 
@@ -68,6 +69,8 @@ How ROTTEN_SERVER was built, in order: what was decided, why, and what went wron
 | Restored world has a different seed | server didn't find `data/world/level.dat` (wrong folder level / copied while running), so it generated a new world | stop stack, folder containing `level.dat` → `data/world`, `chown -R 1000:1000` |
 | `ssh rotten-guy@rotten-server …` refused while already on the server | ran it *on* the server, which has no key for itself | run the command directly, without `ssh` |
 | Termius locked out after SSH hardening | the Termius host was using a password; its key slot was empty | generate a key in Termius, append its public key to `authorized_keys` |
+| OVH refuses an empty subdomain | this OVH UI needs `@` for the domain root | use `@` |
+| `chunky continue`: "No tasks to continue" | the task was already running (nothing paused) | check with `chunky progress` |
 | `credentials-1` opens as "New File" in nano | NPM 2.16 keeps DNS credentials in its SQLite DB, writes the file only during renewal | rotate by issuing a new certificate (ROADMAP) |
 | Archives dated "yesterday" around midnight | server clock in UTC | `timedatectl set-timezone Europe/Paris` (now in `setup.sh`) |
 

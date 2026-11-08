@@ -12,6 +12,7 @@
 - [x] English documentation: setup, migration, backups, history
 - [x] Minecraft server live (Fabric 1.21.1, existing Hardcore world)
 - [x] Desktop on LAN + `/etc/hosts` (Tailscale broke Discord voice there)
+- [x] Portfolio on https://rotten-guy.com (GitHub Pages)
 
 ## 🔜 Next
 
@@ -48,11 +49,15 @@ Live 3D web map of the world.
 - [ ] On the Celeron: limit the render radius and render after pre-generation, at night. Full renders are CPU-heavy.
 
 ### Portfolio on `rotten-guy.com`
-Public site, but the server stays private.
-- [ ] Host on **GitHub Pages** with custom domain `rotten-guy.com`.
-- [ ] OVH: remove OVH's parking records (`@` A `213.186.33.5`, `www` A `213.186.33.5`, `www` TXT `3|welcome`, `@` TXT `1|www…`); add `@` A ×4 `185.199.108–111.153` + `www` CNAME `rotten-guy.github.io.`. **Keep** the `*` record.
-- [ ] Enforce HTTPS in GitHub Pages once the cert is issued.
-- [ ] If the site needs a build step (Vite, Astro, React), add a Pages workflow in GitHub Actions.
+- [x] GitHub Pages custom domain (`CNAME` in `rotten-guy/rotten-guy.github.io`, PR #1)
+- [x] OVH: parking records removed, apex A/AAAA → GitHub Pages, `www` CNAME → `rotten-guy.github.io.`; `*` kept on the Tailscale IP
+- [ ] Enforce HTTPS ticked in *Settings → Pages*
+
+### Minecraft follow-up
+- [ ] Overworld pre-generation (radius 5000, centred on spawn -304,-112, ~31 h at 3.3 cps)
+- [ ] Then **Deploy** the minecraft stack to apply the new backup settings (12 h / 3 days / zstd), check with `docker inspect minecraft-backup`
+- [ ] Nether: `chunky world minecraft:the_nether`, `chunky center 0 0`, `chunky radius 1500`, `chunky start`
+- [ ] End: `chunky world minecraft:the_end`, `chunky center 0 0`, `chunky radius 2000`, `chunky start`
 
 ## 💡 Later / ideas
 

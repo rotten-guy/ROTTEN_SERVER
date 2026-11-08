@@ -105,6 +105,8 @@ Install Tailscale on every client (desktop, laptop, phone), using the same accou
 
 Check from a client: `ping test.rotten-guy.com` must answer from the Tailscale IP.
 
+The apex and `www` are **not** covered by the wildcard: they serve the public portfolio on GitHub Pages (`@` A ×4 `185.199.108–111.153`, `@` AAAA ×4 `2606:50c0:8000–8003::153`, `www` CNAME `rotten-guy.github.io.`). Delete OVH's default parking records (`213.186.33.5`, `3|welcome`, `1|www…`).
+
 ## 8. OVH API key (for HTTPS certificates)
 
 The server is not reachable from the Internet, so Let's Encrypt validates through DNS (DNS-01 challenge). Create a key at **https://eu.api.ovh.com/createToken/**:

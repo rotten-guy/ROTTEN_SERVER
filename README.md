@@ -20,8 +20,9 @@ rotten-server — Lenovo ThinkCentre M73 Tiny · Debian 13 (trixie)
 | AdGuard Home | https://adguard.rotten-guy.com | tailnet-wide DNS / ad blocking |
 | Vaultwarden | https://vault.rotten-guy.com | Bitwarden apps → *self-hosted* |
 | Minecraft | `mc.rotten-guy.com` | default port 25565 |
+| Portfolio (public) | https://rotten-guy.com | GitHub Pages, not hosted here |
 
-All `*.rotten-guy.com` names resolve to the server's **Tailscale IP**, so they only work on devices logged into the tailnet. Nothing is exposed to the Internet.
+All `*.rotten-guy.com` subdomains resolve to the server's **Tailscale IP**, so they only work on devices logged into the tailnet. Nothing is exposed to the Internet.
 
 ## How it fits together
 
@@ -37,6 +38,7 @@ All `*.rotten-guy.com` names resolve to the server's **Tailscale IP**, so they o
           └────────────────────────────────────── │ :25565 Minecraft             │
                                                   └──────────────────────────────┘
  OVH DNS : *.rotten-guy.com  A  <Tailscale IP>    (public record, private target)
+           rotten-guy.com / www → GitHub Pages     (public portfolio)
  TLS     : Let's Encrypt wildcard via OVH DNS-01  (no inbound HTTP needed)
 ```
 
