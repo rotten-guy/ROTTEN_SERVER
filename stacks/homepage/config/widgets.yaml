@@ -1,0 +1,12 @@
+- resources:
+    label: rotten-server
+    cpu: true
+    memory: true
+    cputemp: true
+    uptime: true
+    disk: /
+- datetime:
+    text_size: md
+    format:
+      timeStyle: short
+      dateStyle: long

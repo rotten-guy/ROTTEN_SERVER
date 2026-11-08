@@ -9,10 +9,12 @@ set -euo pipefail
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 LIVE=/opt/stacks
 command -v rsync >/dev/null || { echo "rsync is missing: sudo apt install rsync" >&2; exit 1; }
-# Data/secret folders are skipped entirely; only compose.yaml and .env.example travel.
+# Data/secret folders are skipped entirely; only compose.yaml, .env.example and the
+# Homepage dashboard config (homepage/config/*.yaml) travel.
 RULES=(--exclude=data/ --exclude=letsencrypt/ --exclude=work/ --exclude=conf/
        --exclude=modpacks/ --exclude=backups/
-       --include='*/' --include=compose.yaml --include=.env.example --exclude='*'
+       --include='*/' --include=compose.yaml --include=.env.example
+       --include='homepage/config/*.yaml' --exclude='*'
        --prune-empty-dirs)
 
 changed() {  # files under $LIVE whose content differs from the repo

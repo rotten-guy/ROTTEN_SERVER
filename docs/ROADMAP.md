@@ -47,6 +47,10 @@
 - [x] First `export`: live files now match the repo
 - [ ] Later, optionally: make `/opt/stacks` the Git working tree itself (Dockge pointed at the repo), which removes the import/export step
 
+### Minecraft web tools (after pre-generation: adding mods restarts the server)
+- [ ] **spark** (performance profiler): check if the pack already has it with `docker exec minecraft rcon-cli "spark tps"`; otherwise add it (`MODRINTH_PROJECTS: spark`)
+- [ ] **Plan** (player analytics, web UI on port 8804): add the Fabric build, put `minecraft` on the `proxy` network, proxy host `stats.rotten-guy.com` → `minecraft:8804`
+
 ### BlueMap: `mcmap.rotten-guy.com`
 Live 3D web map of the world.
 - [ ] Add the BlueMap mod server-side: either in the pack, or via the itzg env `MODRINTH_PROJECTS: bluemap`. Must match the loader (Fabric / NeoForge) and MC version.
@@ -76,5 +80,7 @@ The Celeron G1840T is the bottleneck for modded Minecraft (single-thread perform
 Both are drop-in for the M73 Tiny. After upgrading: raise `MC_MEMORY`, view and simulation distance (see [MIGRATION.md → hardware-specific values](MIGRATION.md#hardware-specific-values-to-revisit)).
 
 ### More services
+- [ ] **Obsidian sync**: Syncthing (light, peer-to-peer, works on Android) or Obsidian LiveSync (CouchDB, real-time). Either fits in today's RAM.
+- [ ] **Nextcloud** (files, calendar, contacts; can also host the Obsidian vault via WebDAV / Remotely Save): needs a database + Redis + PHP, ~1 GB RAM. Do it **after the 16 GB RAM upgrade**.
+- [ ] Immich (photos), same constraint
 - [ ] Portfolio self-hosted later (Cloudflare Tunnel) if GitHub Pages becomes limiting
-- [ ] Nextcloud / Immich (photos) once storage and RAM allow

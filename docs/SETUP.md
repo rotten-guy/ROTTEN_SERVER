@@ -196,7 +196,26 @@ Performance notes for the current hardware:
 - View distance 8 and simulation distance 6 are already set.
 - Server-side optimisation mods help a lot: Lithium, FerriteCore, ModernFix.
 
-## 9.5 Clients at home: LAN instead of Tailscale (optional)
+### 9.5 files (FileBrowser)
+
+FileBrowser runs as UID 1000 like the Minecraft container, so its data folders must exist with that owner **before** the first deploy:
+
+```bash
+sudo mkdir -p /opt/stacks/files/data/database /opt/stacks/files/data/config && sudo chown -R 1000:1000 /opt/stacks/files/data
+```
+
+1. **Deploy**, then read the first-login password in the logs (`User 'admin' initialized with randomly generated password: …`) and the listening port (`Listening on …:80`).
+2. Proxy host `files.rotten-guy.com` → `filebrowser`, that port, wildcard cert.
+3. Log in as `admin`, **change the password** (*Settings → Profile*).
+4. Only `/opt/stacks/minecraft/data` is exposed. After editing a mod config, restart the minecraft stack.
+
+### 9.6 homepage (dashboard)
+
+1. Stack `.env` (template in `.env.example`): AdGuard and NPM logins for the widgets.
+2. **Deploy**, proxy host `home.rotten-guy.com` → `homepage:3000`, wildcard cert.
+3. The dashboard is `stacks/homepage/config/*.yaml`, versioned in Git and synced by `scripts/stacks.sh`. Homepage reloads changes by itself.
+
+## 9.7 Clients at home: LAN instead of Tailscale (optional)
 
 A machine that never leaves home doesn't need Tailscale: point the names to the server's **LAN IP** instead. NPM listens on the LAN too, so HTTPS keeps working. This is how `rotten-desktop` is set up, because Tailscale broke Discord voice there.
 
@@ -205,7 +224,7 @@ sudo tailscale down && sudo systemctl disable --now tailscaled
 ```
 
 ```bash
-printf '\n# rotten-server (LAN)\n192.168.1.107 rotten-server dockge.rotten-guy.com proxy.rotten-guy.com adguard.rotten-guy.com vault.rotten-guy.com mc.rotten-guy.com mcmap.rotten-guy.com\n' | sudo tee -a /etc/hosts
+printf '\n# rotten-server (LAN)\n192.168.1.107 rotten-server home.rotten-guy.com dockge.rotten-guy.com proxy.rotten-guy.com adguard.rotten-guy.com vault.rotten-guy.com files.rotten-guy.com stats.rotten-guy.com mc.rotten-guy.com mcmap.rotten-guy.com\n' | sudo tee -a /etc/hosts
 ```
 
 ```bash

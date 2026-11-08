@@ -1,0 +1,17 @@
+title: rotten-server
+description: rotten-guy.com homelab
+theme: dark
+color: slate
+headerStyle: clean
+statusStyle: dot
+hideVersion: true
+layout:
+  Infrastructure:
+    style: row
+    columns: 3
+  Apps:
+    style: row
+    columns: 2
+  Minecraft:
+    style: row
+    columns: 2

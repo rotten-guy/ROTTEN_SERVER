@@ -10,15 +10,19 @@ rotten-server — Lenovo ThinkCentre M73 Tiny · Debian 13 (trixie)
     ├── proxy ........... Nginx Proxy Manager + wildcard Let's Encrypt cert
     ├── adguard ......... DNS + ad blocking for every device on the tailnet
     ├── vaultwarden ..... password manager (Bitwarden-compatible)
+    ├── homepage ........ dashboard: every service, live status, widgets
+    ├── files ........... FileBrowser for the Minecraft server files
     └── minecraft ....... modded Hardcore server + automatic world backups
 ```
 
 | Service | URL | Notes |
 |---|---|---|
+| Homepage | https://home.rotten-guy.com | start page: status + widgets for everything |
 | Dockge | https://dockge.rotten-guy.com | manage every stack |
 | Nginx Proxy Manager | https://proxy.rotten-guy.com | proxy hosts + certificates |
 | AdGuard Home | https://adguard.rotten-guy.com | tailnet-wide DNS / ad blocking |
 | Vaultwarden | https://vault.rotten-guy.com | Bitwarden apps → *self-hosted* |
+| FileBrowser | https://files.rotten-guy.com | Minecraft files (configs, uploads) |
 | Minecraft | `mc.rotten-guy.com` | default port 25565 |
 | Portfolio (public) | https://rotten-guy.com | GitHub Pages, not hosted here |
 
@@ -60,7 +64,8 @@ ROTTEN_SERVER/
 ├── desktop/               # desktop side: daily pull of the backups (systemd user timer)
 ├── dockge/compose.yaml    # → /opt/dockge
 └── stacks/                # → /opt/stacks (one folder = one Dockge stack)
-    ├── proxy/  adguard/  vaultwarden/  minecraft/
+    ├── proxy/  adguard/  vaultwarden/  minecraft/  files/
+    └── homepage/          # incl. config/*.yaml: the dashboard, as code
 ```
 
 Secrets (`.env`, certificates, API keys) and data never go into Git; they are covered by the [backups](docs/BACKUPS.md).
@@ -73,7 +78,9 @@ Secrets (`.env`, certificates, API keys) and data never go into Git; they are co
 | Save Dockge edits to GitHub | `~/ROTTEN_SERVER/scripts/stacks.sh import` → `git commit` → `git push` ([details](docs/SETUP.md#12-keep-git-in-sync)) |
 | Apply repo changes to the server | `git pull` → `scripts/stacks.sh export` → *Deploy* in Dockge |
 | Add a web service | new stack on the `proxy` network → NPM *Proxy Host* `<name>.rotten-guy.com` + wildcard cert |
-| Minecraft console | `docker exec -it minecraft rcon-cli` |
+| Minecraft console | Dockge → minecraft → terminal of the `minecraft` container → `rcon-cli` (or `docker exec -it minecraft rcon-cli`) |
+| Edit Minecraft configs | https://files.rotten-guy.com, then restart the stack |
+| Edit the dashboard | `stacks/homepage/config/*.yaml` in the repo → `git pull` + `scripts/stacks.sh export` on the server (Homepage reloads by itself) |
 | Backup now | `sudo /etc/cron.daily/homelab-backup` · `docker exec minecraft-backup backup now` |
 | Pull backups to the desktop now | `systemctl --user start rotten-backup.service` (on the desktop) |
 | Check what's running | `docker ps` · `htop` |

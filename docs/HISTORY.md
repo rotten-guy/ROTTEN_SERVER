@@ -49,7 +49,8 @@ How ROTTEN_SERVER was built, in order: what was decided, why, and what went wron
 18. **Minecraft world restored properly**: the first copy had produced a new seed (the server didn't find the world, so it generated one). Fixed by stopping the stack, placing the folder containing `level.dat` as `data/world`, removing `session.lock`, `chown 1000:1000`. Seed verified, player data intact.
 19. **World backups resized** for a pre-generated world: every 12 h, 3 days on the server, 14 days on the desktop, zstd compression.
 20. **Portfolio on rotten-guy.com**: GitHub Pages custom domain (CNAME file via PR), OVH parking records replaced by GitHub's A/AAAA + `www` CNAME. Private services keep working: the `*` wildcard doesn't cover the apex.
-21. **Git sync**: `scripts/stacks.sh` imports Dockge edits into the repo and exports repo changes to `/opt/stacks` (compose files only).
+21. **Dashboard + file manager**: Homepage chosen over Homarr/Dashy (lighter, YAML config versioned in Git, Docker status + AdGuard/NPM/Minecraft widgets); FileBrowser scoped to the Minecraft files. Together with Dockge's container terminal (`rcon-cli`), this covers what Crafty used to provide without replacing the itzg setup.
+22. **Git sync**: `scripts/stacks.sh` imports Dockge edits into the repo and exports repo changes to `/opt/stacks` (compose files only).
 
 ## Gotchas (lessons learned)
 
@@ -64,7 +65,7 @@ How ROTTEN_SERVER was built, in order: what was decided, why, and what went wron
 | Bitwarden Android: timeout to `100.x` from `192.168.x` | Tailscale off on the phone | install Tailscale, enable Always-on VPN |
 | Backup timer: `Permission denied (publickey)` | main key has a passphrase; a timer can't type it | dedicated key restricted with `rrsync -ro` |
 | SFTP can't write to `/opt/stacks` | `/opt` belongs to root | upload to `~`, then `sudo mv` |
-| Discord voice stuck on "DTLS connection" on the desktop | unknown interaction between Tailscale and Vesktop's WebRTC on Arch (not DNS, not exit node, not netfilter) | desktop off the tailnet, LAN + `/etc/hosts` (see SETUP § Clients at home) |
+| Discord voice stuck on "DTLS connection" on the desktop | unknown interaction between Tailscale and Vesktop's WebRTC on Arch (not DNS, not exit node, not netfilter) | desktop off the tailnet, LAN + `/etc/hosts` (see SETUP § 9.7) |
 | Minecraft backups never pruned on the desktop | mc-backup writes `.tar.gz`, the pull script only pruned `.tgz` | prune both extensions |
 | Restored world has a different seed | server didn't find `data/world/level.dat` (wrong folder level / copied while running), so it generated a new world | stop stack, folder containing `level.dat` → `data/world`, `chown -R 1000:1000` |
 | `ssh rotten-guy@rotten-server …` refused while already on the server | ran it *on* the server, which has no key for itself | run the command directly, without `ssh` |

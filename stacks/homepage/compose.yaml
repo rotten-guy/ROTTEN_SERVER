@@ -1,0 +1,24 @@
+# Homepage: dashboard for every service, with live status and widgets
+# https://home.rotten-guy.com — configured by the YAML files in ./config (versioned in Git)
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    restart: unless-stopped
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: home.rotten-guy.com
+      TZ: Europe/Paris
+      # Widget credentials, referenced in services.yaml as {{HOMEPAGE_VAR_...}}
+      HOMEPAGE_VAR_ADGUARD_USER: ${ADGUARD_USER}
+      HOMEPAGE_VAR_ADGUARD_PASS: ${ADGUARD_PASS}
+      HOMEPAGE_VAR_NPM_USER: ${NPM_USER}
+      HOMEPAGE_VAR_NPM_PASS: ${NPM_PASS}
+    volumes:
+      - ./config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro   # container status + CPU/RAM per service
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

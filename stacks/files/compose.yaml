@@ -1,0 +1,19 @@
+# FileBrowser: web file manager for the Minecraft server files (configs, server.properties, uploads)
+# https://files.rotten-guy.com — first login: admin + the random password printed in the logs
+# Before the first deploy (once):  sudo mkdir -p /opt/stacks/files/data/{database,config} && sudo chown -R 1000:1000 /opt/stacks/files/data
+services:
+  filebrowser:
+    image: filebrowser/filebrowser:latest
+    container_name: filebrowser
+    restart: unless-stopped
+    user: "1000:1000"                        # same UID as the Minecraft container: edits keep the right owner
+    volumes:
+      - /opt/stacks/minecraft/data:/srv/minecraft   # only the Minecraft files are exposed
+      - ./data/database:/database
+      - ./data/config:/config
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

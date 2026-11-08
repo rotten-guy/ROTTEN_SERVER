@@ -1,0 +1,58 @@
+- Infrastructure:
+    - Dockge:
+        icon: dockge.png
+        href: https://dockge.rotten-guy.com
+        description: compose stacks
+        server: rotten-server
+        container: dockge
+    - Nginx Proxy Manager:
+        icon: nginx-proxy-manager.png
+        href: https://proxy.rotten-guy.com
+        description: reverse proxy + certificates
+        server: rotten-server
+        container: npm
+        widget:
+          type: npm
+          url: http://npm:81
+          username: "{{HOMEPAGE_VAR_NPM_USER}}"
+          password: "{{HOMEPAGE_VAR_NPM_PASS}}"
+    - AdGuard Home:
+        icon: adguard-home.png
+        href: https://adguard.rotten-guy.com
+        description: tailnet DNS + ad blocking
+        server: rotten-server
+        container: adguard
+        widget:
+          type: adguard
+          url: http://adguard:3000
+          username: "{{HOMEPAGE_VAR_ADGUARD_USER}}"
+          password: "{{HOMEPAGE_VAR_ADGUARD_PASS}}"
+
+- Apps:
+    - Vaultwarden:
+        icon: vaultwarden.png
+        href: https://vault.rotten-guy.com
+        description: passwords
+        server: rotten-server
+        container: vaultwarden
+    - FileBrowser:
+        icon: filebrowser.png
+        href: https://files.rotten-guy.com
+        description: Minecraft server files
+        server: rotten-server
+        container: filebrowser
+
+- Minecraft:
+    - rotten_adventurer:
+        icon: minecraft.png
+        description: Fabric 1.21.1 · Hardcore · mc.rotten-guy.com
+        server: rotten-server
+        container: minecraft
+        widget:
+          type: minecraft
+          url: udp://192.168.1.107:25565
+    - World backups:
+        icon: mdi-backup-restore
+        description: every 12 h while players are online
+        server: rotten-server
+        container: minecraft-backup

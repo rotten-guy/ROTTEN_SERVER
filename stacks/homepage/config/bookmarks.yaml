@@ -1,0 +1,13 @@
+- Links:
+    - Portfolio:
+        - icon: mdi-web
+          href: https://rotten-guy.com
+    - ROTTEN_SERVER:
+        - icon: github.png
+          href: https://github.com/rotten-guy/ROTTEN_SERVER
+    - Tailscale:
+        - icon: tailscale.png
+          href: https://login.tailscale.com/admin/machines
+    - OVH DNS:
+        - icon: ovh.png
+          href: https://www.ovh.com/manager/#/web/domain/rotten-guy.com/zone
