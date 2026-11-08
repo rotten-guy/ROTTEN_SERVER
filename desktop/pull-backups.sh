@@ -9,11 +9,13 @@ set -euo pipefail
 KEY="$HOME/.ssh/rotten_backup"
 SRC="rotten-guy@rotten-server:./"
 DEST="$HOME/backups/rotten-server"
-KEEP_DAYS=90
+KEEP_DAYS=90       # vault + configs
+MC_KEEP_DAYS=14    # Minecraft worlds are big: keep two weeks
 
 mkdir -p "$DEST"
 # Exit code 23/24 = some files unreadable or vanished mid-transfer (e.g. a
 # Minecraft backup being written): keep going, they'll be picked up next time.
 rsync -a --partial -e "ssh -i $KEY -o IdentitiesOnly=yes -o BatchMode=yes" "$SRC" "$DEST/" || { rc=$?; [ $rc -eq 23 ] || [ $rc -eq 24 ] || exit $rc; echo "warning: partial transfer (code $rc)"; }
-find "$DEST" \( -name '*.tgz' -o -name '*.tar.gz' \) -mtime +"$KEEP_DAYS" -delete
+find "$DEST/vaultwarden" "$DEST/config" -name '*.tgz' -mtime +"$KEEP_DAYS" -delete 2>/dev/null || true
+find "$DEST/minecraft" \( -name '*.tar.gz' -o -name '*.tar.zst' \) -mtime +"$MC_KEEP_DAYS" -delete 2>/dev/null || true
 echo "Backups up to date in $DEST ($(du -sh "$DEST" | cut -f1))"

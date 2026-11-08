@@ -8,7 +8,7 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 
 echo "==> Base packages + automatic security updates"
 apt-get update
-apt-get install -y curl git rsync ufw unattended-upgrades htop powertop
+apt-get install -y curl git rsync unzip zstd ufw unattended-upgrades htop powertop
 dpkg-reconfigure -f noninteractive unattended-upgrades
 timedatectl set-timezone Europe/Paris
 

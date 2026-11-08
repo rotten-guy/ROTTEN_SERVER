@@ -55,7 +55,7 @@ cd ~/backups/rotten-server && scp config/config-<date>.tgz vaultwarden/vaultward
 ```
 
 ```bash
-scp "$(ls -t ~/backups/rotten-server/minecraft/*.tar.gz | head -1)" rotten-guy@<new-server-lan-ip>:~/minecraft-latest.tgz
+scp "$(ls -t ~/backups/rotten-server/minecraft/*.tar.* | head -1)" rotten-guy@<new-server-lan-ip>:~/minecraft-latest.tar.zst
 ```
 
 ```bash
@@ -85,7 +85,7 @@ cd /opt/stacks/vaultwarden/data && ls db_*.sqlite3 && sudo mv db_*.sqlite3 db.sq
 Minecraft world + pack:
 
 ```bash
-sudo mkdir -p /opt/stacks/minecraft/data /opt/stacks/minecraft/modpacks && sudo tar -xzf ~/minecraft-latest.tgz -C /opt/stacks/minecraft/data
+sudo mkdir -p /opt/stacks/minecraft/data /opt/stacks/minecraft/modpacks && sudo tar --zstd -xf ~/minecraft-latest.tar.zst -C /opt/stacks/minecraft/data
 ```
 
 ```bash

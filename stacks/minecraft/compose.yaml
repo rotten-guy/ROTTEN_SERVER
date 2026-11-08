@@ -46,10 +46,11 @@ services:
     environment:
       RCON_HOST: mc
       RCON_PASSWORD: ${RCON_PASSWORD}
-      BACKUP_INTERVAL: "6h"
+      BACKUP_INTERVAL: "12h"
       INITIAL_DELAY: "5m"
-      PRUNE_BACKUPS_DAYS: 7          # keep 7 days of world history
-      PAUSE_IF_NO_PLAYERS: "true"    # no pointless backups while nobody plays
+      PRUNE_BACKUPS_DAYS: 3          # world can weigh GBs once pre-generated: keep 3 days on the server
+      PAUSE_IF_NO_PLAYERS: "true"    # no pointless backups while nobody plays (also skips Chunky-only runs)
+      TAR_COMPRESS_METHOD: zstd      # much faster than gzip on the Celeron -> .tar.zst archives
       TZ: Europe/Paris
     volumes:
       - ./data:/data:ro

@@ -46,7 +46,9 @@ How ROTTEN_SERVER was built, in order: what was decided, why, and what went wron
 15. **Desktop leaves the tailnet**: Discord voice (Vesktop) failed at the DTLS step whenever Tailscale was up on the Arch desktop, even with no exit node, `--accept-dns=false` and `--netfilter-mode=off`. Root cause not found. Since the desktop never leaves home, it now reaches the server over the **LAN** via `/etc/hosts` instead, and `tailscaled` is disabled there. Tailscale stays on mobile devices.
 16. **SSH hardened**: key-only, no root login; password login verified refused, backup key still working.
 17. **OVH key rotation postponed**: NPM 2.16 stores DNS-challenge credentials in its database (the `credentials-N` file only exists during renewals), so rotation means re-issuing the certificate. Risk accepted for now; see ROADMAP.
-18. **Git sync**: `scripts/stacks.sh` imports Dockge edits into the repo and exports repo changes to `/opt/stacks` (compose files only).
+18. **Minecraft world restored properly**: the first copy had produced a new seed (the server didn't find the world, so it generated one). Fixed by stopping the stack, placing the folder containing `level.dat` as `data/world`, removing `session.lock`, `chown 1000:1000`. Seed verified, player data intact.
+19. **World backups resized** for a pre-generated world: every 12 h, 3 days on the server, 14 days on the desktop, zstd compression.
+20. **Git sync**: `scripts/stacks.sh` imports Dockge edits into the repo and exports repo changes to `/opt/stacks` (compose files only).
 
 ## Gotchas (lessons learned)
 
@@ -63,6 +65,9 @@ How ROTTEN_SERVER was built, in order: what was decided, why, and what went wron
 | SFTP can't write to `/opt/stacks` | `/opt` belongs to root | upload to `~`, then `sudo mv` |
 | Discord voice stuck on "DTLS connection" on the desktop | unknown interaction between Tailscale and Vesktop's WebRTC on Arch (not DNS, not exit node, not netfilter) | desktop off the tailnet, LAN + `/etc/hosts` (see SETUP § Clients at home) |
 | Minecraft backups never pruned on the desktop | mc-backup writes `.tar.gz`, the pull script only pruned `.tgz` | prune both extensions |
+| Restored world has a different seed | server didn't find `data/world/level.dat` (wrong folder level / copied while running), so it generated a new world | stop stack, folder containing `level.dat` → `data/world`, `chown -R 1000:1000` |
+| `ssh rotten-guy@rotten-server …` refused while already on the server | ran it *on* the server, which has no key for itself | run the command directly, without `ssh` |
+| Termius locked out after SSH hardening | the Termius host was using a password; its key slot was empty | generate a key in Termius, append its public key to `authorized_keys` |
 | `credentials-1` opens as "New File" in nano | NPM 2.16 keeps DNS credentials in its SQLite DB, writes the file only during renewal | rotate by issuing a new certificate (ROADMAP) |
 | Archives dated "yesterday" around midnight | server clock in UTC | `timedatectl set-timezone Europe/Paris` (now in `setup.sh`) |
 
