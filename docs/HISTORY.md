@@ -44,6 +44,9 @@ How ROTTEN_SERVER was built, in order: what was decided, why, and what went wron
 13. **Docs**: everything translated to English; setup, migration, backups, history and roadmap written.
 14. **Minecraft live**: server up in ~57 s, existing Hardcore world restored, 64 datapacks active (all mod-provided), first world backup pulled to the desktop. Chunky pre-generation (radius 2000) started.
 15. **Desktop leaves the tailnet**: Discord voice (Vesktop) failed at the DTLS step whenever Tailscale was up on the Arch desktop, even with no exit node, `--accept-dns=false` and `--netfilter-mode=off`. Root cause not found. Since the desktop never leaves home, it now reaches the server over the **LAN** via `/etc/hosts` instead, and `tailscaled` is disabled there. Tailscale stays on mobile devices.
+16. **SSH hardened**: key-only, no root login; password login verified refused, backup key still working.
+17. **OVH key rotation postponed**: NPM 2.16 stores DNS-challenge credentials in its database (the `credentials-N` file only exists during renewals), so rotation means re-issuing the certificate. Risk accepted for now; see ROADMAP.
+18. **Git sync**: `scripts/stacks.sh` imports Dockge edits into the repo and exports repo changes to `/opt/stacks` (compose files only).
 
 ## Gotchas (lessons learned)
 
@@ -60,6 +63,7 @@ How ROTTEN_SERVER was built, in order: what was decided, why, and what went wron
 | SFTP can't write to `/opt/stacks` | `/opt` belongs to root | upload to `~`, then `sudo mv` |
 | Discord voice stuck on "DTLS connection" on the desktop | unknown interaction between Tailscale and Vesktop's WebRTC on Arch (not DNS, not exit node, not netfilter) | desktop off the tailnet, LAN + `/etc/hosts` (see SETUP § Clients at home) |
 | Minecraft backups never pruned on the desktop | mc-backup writes `.tar.gz`, the pull script only pruned `.tgz` | prune both extensions |
+| `credentials-1` opens as "New File" in nano | NPM 2.16 keeps DNS credentials in its SQLite DB, writes the file only during renewal | rotate by issuing a new certificate (ROADMAP) |
 | Archives dated "yesterday" around midnight | server clock in UTC | `timedatectl set-timezone Europe/Paris` (now in `setup.sh`) |
 
 ## Security incidents

@@ -238,6 +238,48 @@ ssh rotten-guy@rotten-server
 ssh -o PubkeyAuthentication=no rotten-guy@rotten-server
 ```
 
+## 12. Keep Git in sync
+
+`/opt/stacks` is the live copy that Dockge edits; the repo is the reference. `scripts/stacks.sh` moves **compose files only** between them (never `.env`, never data):
+
+| Command | Direction | When |
+|---|---|---|
+| `scripts/stacks.sh status` | compare | anytime: shows a diff |
+| `scripts/stacks.sh import` | live → repo | after editing a stack in Dockge, then commit + push |
+| `scripts/stacks.sh export` | repo → live | after `git pull`, then *Deploy* the changed stacks |
+
+### Push access from the server (once)
+
+A **deploy key** gives this server write access to this repo only.
+
+```bash
+ssh-keygen -t ed25519 -N "" -C "rotten-server deploy key" -f ~/.ssh/github_rotten_server
+```
+
+```bash
+cat ~/.ssh/github_rotten_server.pub
+```
+
+GitHub → repo → *Settings → Deploy keys → Add deploy key* → paste it, tick **Allow write access**.
+
+```bash
+printf 'Host github.com\n  IdentityFile ~/.ssh/github_rotten_server\n  IdentitiesOnly yes\n' >> ~/.ssh/config && chmod 600 ~/.ssh/config
+```
+
+```bash
+ssh -T git@github.com
+```
+
+The answer must contain `successfully authenticated`.
+
+```bash
+cd ~/ROTTEN_SERVER && git remote set-url origin git@github.com:rotten-guy/ROTTEN_SERVER.git
+```
+
+```bash
+git config user.name "rotten-server" && git config user.email "<your GitHub email or noreply address>"
+```
+
 ## Done checklist
 
 - [ ] `docker ps` shows dockge, npm, adguard, vaultwarden, minecraft, minecraft-backup

@@ -53,7 +53,8 @@ ROTTEN_SERVER/
 │   └── ROADMAP.md         # done / next / ideas
 ├── scripts/
 │   ├── setup.sh           # bootstrap a fresh Debian (Docker, Tailscale, ufw, Dockge…)
-│   └── backup.sh          # nightly backup → /opt/backups (cron.daily)
+│   ├── backup.sh          # nightly backup → /opt/backups (cron.daily)
+│   └── stacks.sh          # sync compose files between the repo and /opt (status/import/export)
 ├── desktop/               # desktop side: daily pull of the backups (systemd user timer)
 ├── dockge/compose.yaml    # → /opt/dockge
 └── stacks/                # → /opt/stacks (one folder = one Dockge stack)
@@ -67,6 +68,8 @@ Secrets (`.env`, certificates, API keys) and data never go into Git; they are co
 | Task | How |
 |---|---|
 | Edit / restart / update a stack | Dockge → stack → *Edit* / *Restart* / *Update* |
+| Save Dockge edits to GitHub | `~/ROTTEN_SERVER/scripts/stacks.sh import` → `git commit` → `git push` ([details](docs/SETUP.md#12-keep-git-in-sync)) |
+| Apply repo changes to the server | `git pull` → `scripts/stacks.sh export` → *Deploy* in Dockge |
 | Add a web service | new stack on the `proxy` network → NPM *Proxy Host* `<name>.rotten-guy.com` + wildcard cert |
 | Minecraft console | `docker exec -it minecraft rcon-cli` |
 | Backup now | `sudo /etc/cron.daily/homelab-backup` · `docker exec minecraft-backup backup now` |

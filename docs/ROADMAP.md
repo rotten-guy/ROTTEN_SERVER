@@ -24,18 +24,20 @@
 - [ ] Join in game from the client pack and confirm the mod list matches
 
 ### Security housekeeping
-- [ ] Harden SSH: no passwords, no root ([SETUP § 11](SETUP.md#11-harden-ssh))
-- [ ] Rotate the OVH API key (old one was exposed in screenshots):
+- [x] Harden SSH: no passwords, no root
+- [ ] ⏸️ **Postponed (risk accepted)**: rotate the OVH API key (old one was exposed in screenshots; it can edit the DNS zone). NPM keeps DNS credentials in its database, not in a file, so rotating means:
   1. create a new key with the same rights;
-  2. replace the 3 values in `/opt/stacks/proxy/letsencrypt/credentials/credentials-1`;
-  3. delete the old application via https://eu.api.ovh.com/console/ (`GET /me/api/application` → `DELETE /me/api/application/{id}`);
-  4. NPM → Certificates → ⋮ → **Renew Now** to prove the new key works.
-- [ ] `sudo timedatectl set-timezone Europe/Paris` on the current server (new installs get it from `setup.sh`)
+  2. NPM: add a **new** wildcard certificate with the new key;
+  3. switch every proxy host to the new certificate, check the old one shows *Not Used*, delete it;
+  4. delete the old application in https://eu.api.ovh.com/console/ (*Authenticate* first, then `/me` section: `GET /me/api/application` → `GET …/{id}` to find `npm-rotten-server` → `DELETE …/{id}`).
+- [ ] ~~old procedure (edit the credentials file)~~: does not work with NPM 2.16, the file only exists during renewals.
+- [x] Server timezone Europe/Paris
 
-### Make Git the source of truth
-Today `/opt/stacks` is a *copy* of the repo, so edits made in Dockge don't flow back to GitHub (drift).
-- [ ] Turn `/opt/stacks` into the repo's working tree, e.g. move the clone to `/opt/ROTTEN_SERVER` and point Dockge's `DOCKGE_STACKS_DIR` at `/opt/ROTTEN_SERVER/stacks`. `.gitignore` already excludes data and secrets.
-- [ ] Then every Dockge edit shows up in `git diff`; commit + push from the server.
+### Git in sync with the server
+- [x] `scripts/stacks.sh` (status / import / export of compose files)
+- [ ] Deploy key with write access on the server ([SETUP § 12](SETUP.md#12-keep-git-in-sync))
+- [ ] First `export` to replace the old French comments on the live files
+- [ ] Later, optionally: make `/opt/stacks` the Git working tree itself (Dockge pointed at the repo), which removes the import/export step
 
 ### BlueMap: `mcmap.rotten-guy.com`
 Live 3D web map of the world.
