@@ -26,8 +26,8 @@
 - [x] Existing Hardcore world restored
 - [x] Overworld pre-generated (Chunky, radius 5000, centred on spawn -304,-112): 393 129 chunks in 29 h 32, world 5.3 GB
 - [x] New backup settings applied (12 h / 3 days / zstd). Note: Dockge *Restart* doesn't apply compose changes; `docker compose up -d` in the stack folder (or *Deploy*) does
-- [ ] Nether pre-generation (running, ~6 cps, ~1.5 h): `chunky world minecraft:the_nether` → `chunky center 0 0` → `chunky radius 1500` → `chunky start`
-- [ ] End pre-generation: `chunky world minecraft:the_end` → `chunky center 0 0` → `chunky radius 2000` → `chunky start`
+- [x] Nether pre-generation (radius 1500; restarted once after a watchdog crash): `chunky world minecraft:the_nether` → `chunky center 0 0` → `chunky radius 1500` → `chunky start`
+- [ ] End pre-generation (running): `chunky world minecraft:the_end` → `chunky center 0 0` → `chunky radius 2000` → `chunky start`
 - [x] World backups land in `/opt/backups/minecraft` and reach the desktop
 - [ ] Join in game from the client pack and confirm the mod list matches
 
@@ -46,6 +46,14 @@
 - [x] Deploy key with write access on the server
 - [x] First `export`: live files now match the repo
 - [ ] Later, optionally: make `/opt/stacks` the Git working tree itself (Dockge pointed at the repo), which removes the import/export step
+
+### Hardcore: practice world now, "official" run later
+The current world (`world`, seed verified) is the **practice world**: rollbacks from backups are allowed (house rule: lag / crash / mod-bug deaths especially).
+Later, ideally after the i5-4590T upgrade (faster pre-generation), start the **official run**: same seed, fresh world, no rollbacks.
+- [ ] `docker exec minecraft rcon-cli seed` → note the seed; stop the stack
+- [ ] `mv data/world data/world.practice` (keep it), create `data/world/` and copy **`datapacks/` and `serverconfig/`** from the practice world into it *before* the first start, so terrain and structures generate identically
+- [ ] set `SEED: "<seed>"` in the compose file, `chown -R 1000:1000 data/world`, deploy
+- [ ] pre-generate again (Overworld 5000 around spawn, Nether 1500, End 2000)
 
 ### Minecraft web tools (after pre-generation: adding mods restarts the server)
 - [ ] **spark** (performance profiler): check if the pack already has it with `docker exec minecraft rcon-cli "spark tps"`; otherwise add it (`MODRINTH_PROJECTS: spark`)
