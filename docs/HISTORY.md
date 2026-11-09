@@ -75,6 +75,7 @@ How ROTTEN_SERVER was built, in order: what was decided, why, and what went wron
 | OVH refuses an empty subdomain | this UI needs `@` for the apex | use `@` |
 | GitHub Pages "Custom domain" empty after DNS change | the `CNAME` PR wasn't merged yet | merge it; don't type the domain in Settings (it would commit a conflicting `CNAME`) |
 | `chunky continue` → "No tasks to continue" | the task was still running, nothing paused | check with `chunky progress` |
+| Server restarts by itself during Nether pre-generation (`Restarts=1`, no OOM) | Minecraft watchdog: one tick took >60 s generating heavy modded structures, server force-stopped (`crash-reports/`) | `MAX_TICK_TIME: "-1"` in the compose file |
 | `credentials-1` opens as "New File" in nano | NPM 2.16 keeps DNS credentials in its SQLite DB, writes the file only during renewal | rotate by issuing a new certificate (ROADMAP) |
 | Archives dated "yesterday" around midnight | server clock in UTC | `timedatectl set-timezone Europe/Paris` (now in `setup.sh`) |
 

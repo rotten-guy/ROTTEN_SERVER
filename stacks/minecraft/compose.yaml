@@ -15,6 +15,7 @@ services:
       MODRINTH_MODPACK: /modpacks/pack.mrpack   # your .mrpack (client-only mods are skipped automatically)
       MEMORY: ${MC_MEMORY:-3G}                  # 5.7 GB total on this box: 3G max (see docs)
       USE_AIKAR_FLAGS: "true"                   # tuned JVM flags
+      MAX_TICK_TIME: "-1"                       # no watchdog: on the Celeron, heavy worldgen (Incendium…) can stall a tick >60 s and get the server killed
       TZ: Europe/Paris
 
       # World
