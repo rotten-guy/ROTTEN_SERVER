@@ -24,9 +24,9 @@
 - [x] First boot of the pack (`Done` in 17 s, 57 s total)
 - [x] Datapacks active (64, all mod-provided)
 - [x] Existing Hardcore world restored
-- [ ] Overworld pre-generation (Chunky, radius 5000, centred on spawn -304,-112): ~31 h at 3.3 cps
-- [ ] Then **Deploy** the minecraft stack (applies the new backup settings: 12 h / 3 days / zstd), and `chunky continue` if needed
-- [ ] Nether pre-generation: `chunky world minecraft:the_nether` → `chunky center 0 0` → `chunky radius 1500` → `chunky start`
+- [x] Overworld pre-generated (Chunky, radius 5000, centred on spawn -304,-112): 393 129 chunks in 29 h 32, world 5.3 GB
+- [x] New backup settings applied (12 h / 3 days / zstd). Note: Dockge *Restart* doesn't apply compose changes; `docker compose up -d` in the stack folder (or *Deploy*) does
+- [ ] Nether pre-generation (running, ~6 cps, ~1.5 h): `chunky world minecraft:the_nether` → `chunky center 0 0` → `chunky radius 1500` → `chunky start`
 - [ ] End pre-generation: `chunky world minecraft:the_end` → `chunky center 0 0` → `chunky radius 2000` → `chunky start`
 - [x] World backups land in `/opt/backups/minecraft` and reach the desktop
 - [ ] Join in game from the client pack and confirm the mod list matches
