@@ -68,6 +68,25 @@ stop_server() {  # save, then stop the whole stack gracefully
 
 step() { cat "$STATE" 2>/dev/null || echo 0; }
 
+global_progress() {  # all 3 dimensions together: chunks done / total + ETA at the current rate
+  local n out total=0 done=0 cur rate i r c
+  n=$(step)
+  out=$(rcon "$RET_CT" "chunky progress" || true)
+  for i in "${!PLAN[@]}"; do
+    IFS='|' read -r _ _ r <<<"${PLAN[$i]}"
+    c=$(( (2*((r+15)/16)+1)**2 ))             # Chunky square: (2*ceil(r/16)+1)^2 chunks
+    total=$((total+c))
+    if [ "$n" -gt "${#PLAN[@]}" ] || [ "$i" -lt "$((n-1))" ]; then done=$((done+c)); fi
+  done
+  cur=$(grep -oE 'Processed: [0-9]+' <<<"$out" | grep -oE '[0-9]+' || echo 0)
+  rate=$(grep -oE 'Rate: [0-9.]+' <<<"$out" | grep -oE '[0-9.]+' || echo 0)
+  [ "$n" -gt "${#PLAN[@]}" ] && cur=0
+  awk -v d="$((done+cur))" -v t="$total" -v r="$rate" 'BEGIN{
+    printf "  %d / %d chunks (%.1f%%)", d, t, 100*d/t
+    if (r > 0 && d < t) { s=(t-d)/r; printf " — ETA ~%dh%02d at %.1f cps (rate varies per dimension)", s/3600, (s%3600)/60, r }
+    print "" }'
+}
+
 cmd_status() {
   echo "== Mode"
   if running "$PLAY_CT"; then
@@ -88,6 +107,7 @@ cmd_status() {
     printf '  %-8s %-22s radius %s\n' "$mark" "$world" "$radius"
   done
   [ "$n" -gt "${#PLAN[@]}" ] && echo "  >>> All 3 dimensions pre-generated."
+  if running "$RET_CT"; then echo "== Global (3 dimensions)"; global_progress; fi
   if running "$RET_CT"; then
     echo "== Chunky"
     rcon "$RET_CT" "chunky progress" | sed 's/^/  /' || echo "  (server still booting)"
