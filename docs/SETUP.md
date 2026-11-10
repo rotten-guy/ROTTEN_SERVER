@@ -215,7 +215,41 @@ sudo mkdir -p /opt/stacks/files/data/database /opt/stacks/files/data/config && s
 2. **Deploy**, proxy host `home.rotten-guy.com` → `homepage:3000`, wildcard cert.
 3. The dashboard is `stacks/homepage/config/*.yaml`, versioned in Git and synced by `scripts/stacks.sh`. Homepage reloads changes by itself.
 
-## 9.7 Clients at home: LAN instead of Tailscale (optional)
+### 9.7 minecraft-return (background pre-generation)
+
+A second server with the **same pack and settings** and a **random seed**: the future "official" Hardcore world. It never runs at the same time as `minecraft` (6 GB of RAM): the `mc` command switches between them, and a timer chains Chunky over the 3 dimensions (Overworld 5000 around spawn, Nether 1500, End 2000).
+
+Once (already done by `setup.sh` on a new install):
+
+```bash
+sudo ln -sf ~/ROTTEN_SERVER/scripts/mc.sh /usr/local/bin/mc
+```
+
+```bash
+sudo install -m 644 ~/ROTTEN_SERVER/systemd/mc-pregen.{service,timer} /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now mc-pregen.timer
+```
+
+Prepare the world (copies the practice server's mod configs, world datapacks, `serverconfig/` and `.env` **before** the world is created):
+
+```bash
+mc init-return
+```
+
+Then, every time you stop playing:
+
+```bash
+mc pregen
+```
+
+and when you want to play again:
+
+```bash
+mc play
+```
+
+`mc status` shows the mode, the players online, Chunky's progress and the plan; `mc seed` gives the new world's seed. Progress is kept across switches: Chunky saves on every graceful stop and `mc tick` resumes it.
+
+## 9.8 Clients at home: LAN instead of Tailscale (optional)
 
 A machine that never leaves home doesn't need Tailscale: point the names to the server's **LAN IP** instead. NPM listens on the LAN too, so HTTPS keeps working. This is how `rotten-desktop` is set up, because Tailscale broke Discord voice there.
 

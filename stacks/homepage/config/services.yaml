@@ -56,3 +56,8 @@
         description: every 12 h while players are online
         server: rotten-server
         container: minecraft-backup
+    - rotten_return:
+        icon: mdi-earth-plus
+        description: future official world · pre-generating (mc status)
+        server: rotten-server
+        container: minecraft-return

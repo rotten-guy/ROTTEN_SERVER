@@ -51,6 +51,13 @@ cp -n "$REPO/dockge/compose.yaml" /opt/dockge/compose.yaml
 echo "==> Nightly backup (/opt/backups)"
 install -m 755 "$REPO/scripts/backup.sh" /etc/cron.daily/homelab-backup
 
+echo "==> mc command + Minecraft pre-generation timer"
+ln -sf "$REPO/scripts/mc.sh" /usr/local/bin/mc
+install -m 644 "$REPO/systemd/mc-pregen.service" "$REPO/systemd/mc-pregen.timer" /etc/systemd/system/
+sed -i "s/^User=.*/User=$USER_NAME/" /etc/systemd/system/mc-pregen.service
+systemctl daemon-reload
+systemctl enable --now mc-pregen.timer
+
 echo "==> Starting Dockge"
 docker compose -f /opt/dockge/compose.yaml up -d
 

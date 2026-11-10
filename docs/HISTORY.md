@@ -65,7 +65,7 @@ How ROTTEN_SERVER was built, in order: what was decided, why, and what went wron
 | Bitwarden Android: timeout to `100.x` from `192.168.x` | Tailscale off on the phone | install Tailscale, enable Always-on VPN |
 | Backup timer: `Permission denied (publickey)` | main key has a passphrase; a timer can't type it | dedicated key restricted with `rrsync -ro` |
 | SFTP can't write to `/opt/stacks` | `/opt` belongs to root | upload to `~`, then `sudo mv` |
-| Discord voice stuck on "DTLS connection" on the desktop | unknown interaction between Tailscale and Vesktop's WebRTC on Arch (not DNS, not exit node, not netfilter) | desktop off the tailnet, LAN + `/etc/hosts` (see SETUP § 9.7) |
+| Discord voice stuck on "DTLS connection" on the desktop | unknown interaction between Tailscale and Vesktop's WebRTC on Arch (not DNS, not exit node, not netfilter) | desktop off the tailnet, LAN + `/etc/hosts` (see SETUP § 9.8) |
 | Minecraft backups never pruned on the desktop | mc-backup writes `.tar.gz`, the pull script only pruned `.tgz` | prune both extensions |
 | Restored world has a different seed | server didn't find `data/world/level.dat` (wrong folder level / copied while running), so it generated a new world | stop stack, folder containing `level.dat` → `data/world`, `chown -R 1000:1000` |
 | `ssh rotten-guy@rotten-server …` refused while already on the server | ran it *on* the server, which has no key for itself | run the command directly, without `ssh` |

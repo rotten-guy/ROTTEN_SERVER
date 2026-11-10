@@ -29,6 +29,7 @@ fi
 # --- Configuration -----------------------------------------------------------
 tar -czf "$DEST/config/config-$DATE.tgz" -C /opt \
   --exclude=stacks/minecraft/data \
+  --exclude=stacks/minecraft-return/data \
   --exclude=stacks/minecraft/modpacks \
   --exclude=stacks/vaultwarden/data \
   --exclude=stacks/adguard/work \

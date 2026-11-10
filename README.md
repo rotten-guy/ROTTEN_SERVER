@@ -12,7 +12,8 @@ rotten-server — Lenovo ThinkCentre M73 Tiny · Debian 13 (trixie)
     ├── vaultwarden ..... password manager (Bitwarden-compatible)
     ├── homepage ........ dashboard: every service, live status, widgets
     ├── files ........... FileBrowser for the Minecraft server files
-    └── minecraft ....... modded Hardcore server + automatic world backups
+    ├── minecraft ....... practice Hardcore world + automatic world backups
+    └── minecraft-return  future "official" world, pre-generated while nobody plays
 ```
 
 | Service | URL | Notes |
@@ -60,11 +61,13 @@ ROTTEN_SERVER/
 ├── scripts/
 │   ├── setup.sh           # bootstrap a fresh Debian (Docker, Tailscale, ufw, Dockge…)
 │   ├── backup.sh          # nightly backup → /opt/backups (cron.daily)
-│   └── stacks.sh          # sync compose files between the repo and /opt (status/import/export)
+│   ├── stacks.sh          # sync compose files between the repo and /opt (status/import/export)
+│   └── mc.sh              # `mc`: play / pregen switch + automatic 3-dimension pre-generation
+├── systemd/               # mc-pregen.timer: chains Chunky every 5 min
 ├── desktop/               # desktop side: daily pull of the backups (systemd user timer)
 ├── dockge/compose.yaml    # → /opt/dockge
 └── stacks/                # → /opt/stacks (one folder = one Dockge stack)
-    ├── proxy/  adguard/  vaultwarden/  minecraft/  files/
+    ├── proxy/  adguard/  vaultwarden/  minecraft/  minecraft-return/  files/
     └── homepage/          # incl. config/*.yaml: the dashboard, as code
 ```
 
@@ -78,6 +81,9 @@ Secrets (`.env`, certificates, API keys) and data never go into Git; they are co
 | Save Dockge edits to GitHub | `~/ROTTEN_SERVER/scripts/stacks.sh import` → `git commit` → `git push` ([details](docs/SETUP.md#12-keep-git-in-sync)) |
 | Apply repo changes to the server | `git pull` → `scripts/stacks.sh export` → *Deploy* in Dockge |
 | Add a web service | new stack on the `proxy` network → NPM *Proxy Host* `<name>.rotten-guy.com` + wildcard cert |
+| Finished playing → pre-generate the next world | `mc pregen` (refuses while players are online) |
+| Want to play again | `mc play` (~1–2 min) |
+| Where is the pre-generation | `mc status` |
 | Minecraft console | Dockge → minecraft → terminal of the `minecraft` container → `rcon-cli` (or `docker exec -it minecraft rcon-cli`) |
 | Edit Minecraft configs | https://files.rotten-guy.com, then restart the stack |
 | Edit the dashboard | `stacks/homepage/config/*.yaml` in the repo → `git pull` + `scripts/stacks.sh export` on the server (Homepage reloads by itself) |

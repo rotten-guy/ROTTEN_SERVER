@@ -1,0 +1,39 @@
+# minecraft-return: the future "official" Hardcore world, pre-generated in the background
+# Same modpack and settings as the practice server, random seed, nobody connects to it.
+# It NEVER runs at the same time as `minecraft` (not enough RAM): switch with `mc play` / `mc pregen`.
+# Chunky's 3 dimensions are chained automatically by `mc tick` (systemd timer, every 5 min).
+services:
+  mc:
+    image: itzg/minecraft-server:java21
+    container_name: minecraft-return
+    restart: unless-stopped
+    stop_grace_period: 2m      # let the server save the world and Chunky's progress on stop
+    tty: true
+    stdin_open: true
+    # no published port: this world isn't played yet
+    environment:
+      EULA: "TRUE"
+      TYPE: MODRINTH
+      MODRINTH_MODPACK: /modpacks/pack.mrpack   # the very same pack as the practice server
+      MEMORY: ${MC_MEMORY:-3G}
+      USE_AIKAR_FLAGS: "true"
+      MAX_TICK_TIME: "-1"                       # heavy worldgen ticks must not trigger the watchdog
+      TZ: Europe/Paris
+
+      # World — no SEED: random. Read it with `mc seed`.
+      HARDCORE: "true"
+      DIFFICULTY: hard
+      MOTD: "rotten-server - Hardcore (return)"
+      VIEW_DISTANCE: 8
+      SIMULATION_DISTANCE: 6
+      MAX_PLAYERS: 5
+
+      ENABLE_WHITELIST: "true"
+      WHITELIST: ${MC_WHITELIST}
+      OPS: ${MC_OPS}
+
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: ${RCON_PASSWORD}
+    volumes:
+      - ./data:/data
+      - /opt/stacks/minecraft/modpacks:/modpacks:ro   # shared with the practice server

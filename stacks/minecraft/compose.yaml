@@ -5,6 +5,7 @@ services:
     image: itzg/minecraft-server:java21   # java21 = Minecraft 1.20.5 -> 1.21.x (26.x needs java25)
     container_name: minecraft
     restart: unless-stopped
+    stop_grace_period: 2m      # let the server save the world on stop (docker's default is 10 s)
     tty: true
     stdin_open: true
     ports:

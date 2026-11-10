@@ -27,7 +27,7 @@
 - [x] Overworld pre-generated (Chunky, radius 5000, centred on spawn -304,-112): 393 129 chunks in 29 h 32, world 5.3 GB
 - [x] New backup settings applied (12 h / 3 days / zstd). Note: Dockge *Restart* doesn't apply compose changes; `docker compose up -d` in the stack folder (or *Deploy*) does
 - [x] Nether pre-generation (radius 1500; restarted once after a watchdog crash): `chunky world minecraft:the_nether` → `chunky center 0 0` → `chunky radius 1500` → `chunky start`
-- [ ] End pre-generation (running): `chunky world minecraft:the_end` → `chunky center 0 0` → `chunky radius 2000` → `chunky start`
+- [x] End pre-generation: `chunky world minecraft:the_end` → `chunky center 0 0` → `chunky radius 2000` → `chunky start`
 - [x] World backups land in `/opt/backups/minecraft` and reach the desktop
 - [ ] Join in game from the client pack and confirm the mod list matches
 
@@ -48,12 +48,12 @@
 - [ ] Later, optionally: make `/opt/stacks` the Git working tree itself (Dockge pointed at the repo), which removes the import/export step
 
 ### Hardcore: practice world now, "official" run later
-The current world (`world`, seed verified) is the **practice world**: rollbacks from backups are allowed (house rule: lag / crash / mod-bug deaths especially).
-Later, ideally after the i5-4590T upgrade (faster pre-generation), start the **official run**: same seed, fresh world, no rollbacks.
-- [ ] `docker exec minecraft rcon-cli seed` → note the seed; stop the stack
-- [ ] `mv data/world data/world.practice` (keep it), create `data/world/` and copy **`datapacks/` and `serverconfig/`** from the practice world into it *before* the first start, so terrain and structures generate identically
-- [ ] set `SEED: "<seed>"` in the compose file, `chown -R 1000:1000 data/world`, deploy
-- [ ] pre-generate again (Overworld 5000 around spawn, Nether 1500, End 2000)
+The current world (`minecraft`, seed verified) is the **practice world**: rollbacks from backups allowed.
+The **official run** world is pre-generated in the background by the `minecraft-return` stack (random seed, same pack), whenever nobody plays: `mc pregen` / `mc play`, chained by `mc-pregen.timer`.
+- [x] All 3 dimensions of the practice world pre-generated (Overworld 29 h 32, Nether 1 h 52, End 2 h 50)
+- [ ] `mc init-return`, then `mc pregen` after each session until `mc status` says all 3 dimensions are done
+- [ ] Note its seed (`mc seed`)
+- [ ] Go-live of the official run: swap the worlds (stop both, `minecraft/data/world` → `world.practice`, move `minecraft-return/data/world` in its place, `chown -R 1000:1000`), keep `minecraft-return` stopped or remove it
 
 ### Minecraft web tools (after pre-generation: adding mods restarts the server)
 - [ ] **spark** (performance profiler): check if the pack already has it with `docker exec minecraft rcon-cli "spark tps"`; otherwise add it (`MODRINTH_PROJECTS: spark`)
