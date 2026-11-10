@@ -249,6 +249,39 @@ mc play
 
 `mc status` shows the mode, the players online, Chunky's progress and the plan; `mc seed` gives the new world's seed. Progress is kept across switches: Chunky saves on every graceful stop and `mc tick` resumes it.
 
+#### Pre-generating on a faster machine (e.g. the desktop)
+
+Generation is deterministic (same seed + same mods + same configs + same datapacks ⇒ same world), so any machine can do it. The desktop (i7-9700K) is several times faster than the Celeron.
+
+1. Server: `mc stop` (or `mc play`), then package the stack **with its mods and the pack**:
+   ```bash
+   sudo tar -C /opt/stacks -czf ~/mc-return.tgz minecraft-return minecraft/modpacks/pack.mrpack && sudo chown rotten-guy: ~/mc-return.tgz
+   ```
+   ⚠️ Don't `mc pregen` on the server while the other machine generates: the two copies would diverge.
+2. Desktop (Arch): Docker, then unpack next to each other:
+   ```bash
+   sudo pacman -S --needed docker docker-compose && sudo systemctl enable --now docker
+   ```
+   ```bash
+   mkdir -p ~/mc-pregen && sudo tar -xzf ~/mc-return.tgz -C ~/mc-pregen && sudo chown -R 1000:1000 ~/mc-pregen
+   ```
+3. Point the pack mount to the local copy and give it more RAM. The override file in `~/mc-pregen/minecraft-return/compose.override.yaml`:
+   ```yaml
+   services:
+     mc:
+       volumes:
+         - ../minecraft/modpacks:/modpacks:ro
+   ```
+   and `MC_MEMORY=10G` in its `.env`.
+4. Run the same script against that folder:
+   ```bash
+   MC_RET_DIR=~/mc-pregen/minecraft-return ~/ROTTEN_SERVER/scripts/mc.sh pregen
+   ```
+   ```bash
+   MC_RET_DIR=~/mc-pregen/minecraft-return ~/ROTTEN_SERVER/scripts/mc.sh loop
+   ```
+5. When the loop says *Plan complete*: `… mc.sh stop`, then send `minecraft-return/` back and swap it in on the server (old copy kept aside, `chown -R 1000:1000`, `pregen-step` already at 4).
+
 ## 9.8 Clients at home: LAN instead of Tailscale (optional)
 
 A machine that never leaves home doesn't need Tailscale: point the names to the server's **LAN IP** instead. NPM listens on the LAN too, so HTTPS keeps working. This is how `rotten-desktop` is set up, because Tailscale broke Discord voice there.

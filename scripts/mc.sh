@@ -8,6 +8,8 @@
 #   mc play            stop the pre-generation, start the practice server
 #   mc pregen [-f]     stop the practice server (refuses if players are online,
 #                      unless -f), start minecraft-return; the timer does the rest
+#   mc stop            stop minecraft-return only (graceful: world + Chunky saved)
+#   mc loop            run `mc tick` every 5 min in the foreground (machines without the timer)
 #   mc init-return     one-time: prepare minecraft-return (config, world datapacks, .env)
 #   mc seed            seed of the minecraft-return world
 #   mc tick            called every 5 min by mc-pregen.timer: resume Chunky, or
@@ -16,8 +18,10 @@
 # Only one Minecraft server runs at a time: 6 GB of RAM can't hold two.
 set -euo pipefail
 
-PLAY_DIR=/opt/stacks/minecraft
-RET_DIR=/opt/stacks/minecraft-return
+# Overridable, e.g. to pre-generate on a faster machine (see docs/SETUP.md § 9.7):
+#   MC_RET_DIR=~/mc-pregen/minecraft-return mc pregen
+PLAY_DIR=${MC_PLAY_DIR:-/opt/stacks/minecraft}
+RET_DIR=${MC_RET_DIR:-/opt/stacks/minecraft-return}
 PLAY_CT=minecraft
 RET_CT=minecraft-return
 STATE="$RET_DIR/data/pregen-step"           # index of the next plan step to start
@@ -110,6 +114,17 @@ cmd_pregen() {
   log "Pre-generation running. 'mc status' to follow it, 'mc play' to get your world back."
 }
 
+cmd_stop() { stop_server "$RET_DIR" "$RET_CT"; log "minecraft-return stopped."; }
+
+cmd_loop() {  # for a machine without mc-pregen.timer (e.g. the desktop)
+  log "Chaining the pre-generation every 5 min. Ctrl+C to stop watching (the server keeps running)."
+  while true; do
+    cmd_tick || true
+    [ "$(step)" -gt "${#PLAN[@]}" ] && { log "Plan complete."; break; }
+    sleep 300
+  done
+}
+
 cmd_init_return() {
   local src=$PLAY_DIR/data dst=$RET_DIR/data
   [ -d "$RET_DIR" ] || { log "$RET_DIR missing: run 'scripts/stacks.sh export' first."; exit 1; }
@@ -172,6 +187,8 @@ case "${1:-status}" in
   pregen)      cmd_pregen "${2:-}" ;;
   init-return) cmd_init_return ;;
   seed)        cmd_seed ;;
+  stop)        cmd_stop ;;
+  loop)        cmd_loop ;;
   tick)        cmd_tick ;;
-  *) sed -n '2,17p' "$0"; exit 2 ;;
+  *) sed -n '2,20p' "$0"; exit 2 ;;
 esac
