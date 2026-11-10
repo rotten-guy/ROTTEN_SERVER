@@ -36,7 +36,12 @@ PLAN=(
 log()     { echo "[mc $(date '+%F %T')] $*"; }
 running() { [ "$(docker inspect -f '{{.State.Running}}' "$1" 2>/dev/null)" = "true" ]; }
 rcon()    { docker exec "$1" rcon-cli "$2" 2>/dev/null; }
-compose() { docker compose -f "$1/compose.yaml" "${@:2}"; }
+compose() {  # -f disables compose.override.yaml auto-loading: add it back when present
+  local d=$1; shift
+  local files=(-f "$d/compose.yaml")
+  [ -f "$d/compose.override.yaml" ] && files+=(-f "$d/compose.override.yaml")
+  docker compose "${files[@]}" "$@"
+}
 
 wait_ready() {  # wait until RCON answers (server finished booting)
   local ct=$1 i
