@@ -51,8 +51,9 @@
 The current world (`minecraft`, seed verified) is the **practice world**: rollbacks from backups allowed.
 The **official run** world is pre-generated in the background by the `minecraft-return` stack (random seed, same pack), whenever nobody plays: `mc pregen` / `mc play`, chained by `mc-pregen.timer`.
 - [x] All 3 dimensions of the practice world pre-generated (Overworld 29 h 32, Nether 1 h 52, End 2 h 50)
-- [ ] `mc init-return`, then `mc pregen` after each session until `mc status` says all 3 dimensions are done
-- [ ] Note its seed (`mc seed`)
+- [x] `mc init-return` + first `mc pregen` (2026-11-10): new world created, spawn -256 -80, Overworld running
+- [x] Seed of the official world: `1017693222311048285`
+- [ ] `mc pregen` after each session until `mc status` says all 3 dimensions are done
 - [ ] Go-live of the official run: swap the worlds (stop both, `minecraft/data/world` → `world.practice`, move `minecraft-return/data/world` in its place, `chown -R 1000:1000`), keep `minecraft-return` stopped or remove it
 
 ### Minecraft web tools (after pre-generation: adding mods restarts the server)

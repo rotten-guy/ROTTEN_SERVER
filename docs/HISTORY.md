@@ -50,7 +50,8 @@ How ROTTEN_SERVER was built, in order: what was decided, why, and what went wron
 19. **World backups resized** for a pre-generated world: every 12 h, 3 days on the server, 14 days on the desktop, zstd compression.
 20. **Portfolio on rotten-guy.com**: GitHub Pages custom domain (CNAME file via PR), OVH parking records replaced by GitHub's A/AAAA + `www` CNAME. Private services keep working: the `*` wildcard doesn't cover the apex.
 21. **Dashboard + file manager**: Homepage chosen over Homarr/Dashy (lighter, YAML config versioned in Git, Docker status + AdGuard/NPM/Minecraft widgets); FileBrowser scoped to the Minecraft files. Together with Dockge's container terminal (`rcon-cli`), this covers what Crafty used to provide without replacing the itzg setup.
-22. **Git sync**: `scripts/stacks.sh` imports Dockge edits into the repo and exports repo changes to `/opt/stacks` (compose files only).
+22. **minecraft-return**: background pre-generation of the future official world (random seed `1017693222311048285`, same pack), `mc play` / `mc pregen` switch and a 5-minute timer chaining the 3 dimensions. First import + push from the server through the deploy key.
+23. **Git sync**: `scripts/stacks.sh` imports Dockge edits into the repo and exports repo changes to `/opt/stacks` (compose files only).
 
 ## Gotchas (lessons learned)
 
