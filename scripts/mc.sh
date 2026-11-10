@@ -92,8 +92,8 @@ cmd_status() {
     echo "== Chunky"
     rcon "$RET_CT" "chunky progress" | sed 's/^/  /' || echo "  (server still booting)"
   fi
-  echo "== Finished tasks (minecraft-return logs)"
-  docker logs "$RET_CT" 2>&1 | grep "Task finished" | sed 's/^/  /' || echo "  none yet"
+  echo "== Finished tasks (since minecraft-return last started)"
+  docker logs --since "$(docker inspect -f '{{.State.StartedAt}}' "$RET_CT" 2>/dev/null)" "$RET_CT" 2>&1 | grep "Task finished" | sed 's/^/  /' || echo "  none yet"
 }
 
 cmd_play() {
