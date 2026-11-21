@@ -144,7 +144,7 @@ cmd_stop() { stop_server "$RET_DIR" "$RET_CT"; log "minecraft-return stopped."; 
 cmd_loop() {  # for a machine without mc-pregen.timer (e.g. the desktop)
   log "Chaining the pre-generation every 5 min. Ctrl+C to stop watching (the server keeps running)."
   while true; do
-    cmd_tick || true
+    ( cmd_tick ) || true          # subshell: the lock is released between two passes
     [ "$(step)" -gt "${#PLAN[@]}" ] && { log "Plan complete."; break; }
     sleep 300
   done
@@ -176,7 +176,7 @@ cmd_seed() {
 }
 
 cmd_tick() {
-  exec 9>"/tmp/mc-tick.$(id -u).lock"; flock -n 9 || return 0
+  exec 9>"/tmp/mc-tick.$(id -u).lock"; flock -n 9 || { log "Another mc tick is running (loop or timer): skipped."; return 0; }
   running "$RET_CT" || return 0                     # play mode: nothing to do
   rcon "$RET_CT" "list" >/dev/null || return 0      # still booting
   local out n
