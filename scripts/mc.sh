@@ -187,6 +187,16 @@ cmd_tick() {
 
   # Nothing running, nothing to resume: the current step is finished (or none started yet)
   n=$(step)
+  # Only move on if this run's logs prove the previous step finished. A task can be
+  # lost (e.g. Chunky could not save it on stop): then restart the same step; chunks
+  # already generated are skipped quickly.
+  if [ "$n" -ge 1 ] && [ "$n" -le "${#PLAN[@]}" ]; then
+    local pw; IFS='|' read -r pw _ _ <<<"${PLAN[$((n-1))]}"
+    if ! docker logs "$RET_CT" 2>&1 | grep -q "Task finished for $pw"; then
+      log "No 'Task finished' for $pw in the logs: restarting that step (generated chunks are skipped)."
+      n=$((n-1))
+    fi
+  fi
   if [ "$n" -ge "${#PLAN[@]}" ]; then
     if [ "$n" -eq "${#PLAN[@]}" ]; then log "All dimensions pre-generated."; echo $((n+1)) > "$STATE"; fi
     return 0
