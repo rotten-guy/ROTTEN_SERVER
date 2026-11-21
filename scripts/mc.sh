@@ -192,7 +192,9 @@ cmd_tick() {
   # already generated are skipped quickly.
   if [ "$n" -ge 1 ] && [ "$n" -le "${#PLAN[@]}" ]; then
     local pw; IFS='|' read -r pw _ _ <<<"${PLAN[$((n-1))]}"
-    if ! docker logs "$RET_CT" 2>&1 | grep -q "Task finished for $pw"; then
+    # no `docker logs | grep -q`: grep exits early, docker gets SIGPIPE and pipefail
+    # turns the match into a failure. Read the logs first, then search them.
+    if ! grep -q "Task finished for $pw" <<<"$(docker logs "$RET_CT" 2>&1)"; then
       log "No 'Task finished' for $pw in the logs: restarting that step (generated chunks are skipped)."
       n=$((n-1))
     fi
